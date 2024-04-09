@@ -1,0 +1,67 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             xmlns:vm="using:RedisViewDesktop.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="vm:StringViewModel"
+             x:CompileBindings="True"
+             x:Class="RedisViewDesktop.Views.StringView">
+
+  <UserControl.Styles>
+    <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="Transparent"/>
+    </Style>
+  </UserControl.Styles>
+
+  <DockPanel LastChildFill="True">
+    <StackPanel DockPanel.Dock="Top">
+      <StackPanel DockPanel.Dock="Left" Orientation="Horizontal"
+               Margin="10"
+               HorizontalAlignment="Left"
+               VerticalAlignment="Center">
+        <Border CornerRadius="6" Background="{Binding Color}">
+          <TextBlock Text="{Binding Type, DataType={x:Type vm:KeyViewModelBase}}"
+                     Padding="10 1"
+                     Foreground="#ffffff"/>
+        </Border>
+        <TextBlock Text="{Binding Key, DataType={x:Type vm:KeyViewModelBase}}" Margin="10 0 0 0" />
+      </StackPanel>
+      <Border Height="1" Background="#f3f3f3" Margin="0 4"/>
+      <DockPanel LastChildFill="True">
+        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="0 0 10 0">
+          <Button Background="Transparent" Command="{Binding ConfirmCommand}">
+            <i:Icon Value="mdi-check" Margin="0 0 10 0" FontSize="20" IsVisible="{Binding IsEditing}"/>
+          </Button>
+          <Button Background="Transparent" Command="{Binding CancelCommand}">
+            <i:Icon Value="mdi-close" Margin="0 0 10 0" FontSize="20" IsVisible="{Binding IsEditing}"/>
+          </Button>
+          <Button Background="Transparent" Command="{Binding EditCommand}">
+            <i:Icon Value="mdi-pencil" Margin="0 0 10 0" FontSize="20" IsVisible="{Binding !IsEditing}"/>
+          </Button>
+          <Button Background="Transparent" Command="{Binding DeleteCommand}">
+            <i:Icon Value="mdi-delete" FontSize="20"/>
+          </Button>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+          <Label Margin="10 0 0 0" Content="Key Size:" FontSize="20"/>
+          <TextBlock Text="{Binding MemoryUsage, DataType={x:Type vm:KeyViewModelBase}}" VerticalAlignment="Center" Margin="0 0 10 0" FontSize="20"/>
+          <Label Content="Length:" FontSize="20"/>
+          <TextBlock Text="{Binding Length, DataType={x:Type vm:KeyViewModelBase}}" VerticalAlignment="Center" Margin="0 0 10 0" FontSize="20"/>
+          <Label Content="TTL:" FontSize="20"/>
+          <TextBlock Text="{Binding TTL, DataType={x:Type vm:KeyViewModelBase}}" VerticalAlignment="Center" FontSize="20" />
+        </StackPanel>
+      </DockPanel>
+      <Border Height="1" Background="#f3f3f3" Margin="0 4"/>
+    </StackPanel>
+    <DockPanel>
+      <ScrollViewer IsVisible="{Binding !IsEditing}" AllowAutoHide="True">
+        <TextBlock Margin="10" Text="{Binding Content}" TextWrapping="Wrap" IsVisible="{Binding !IsEditing}"/>
+      </ScrollViewer>
+      <ScrollViewer Name="InputScroll" IsVisible="{Binding IsEditing}" AllowAutoHide="True">
+        <TextBox Margin="10" Text="{Binding Content}" TextWrapping="Wrap" IsVisible="{Binding IsEditing}"/>
+      </ScrollViewer>
+    </DockPanel>
+  </DockPanel>
+</UserControl>

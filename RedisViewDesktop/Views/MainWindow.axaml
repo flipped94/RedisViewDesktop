@@ -1,0 +1,53 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:i="https://github.com/projektanker/icons.avalonia"
+        xmlns:vm="using:RedisViewDesktop.ViewModels"
+        x:Class="RedisViewDesktop.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        mc:Ignorable="d" d:DesignWidth="850" d:DesignHeight="600"        
+        Icon="/Assets/16x16.png"
+        Title="RedisView"
+        WindowStartupLocation="CenterScreen"
+        Width="1500"
+        Background="Transparent">
+
+  <Design.DataContext>
+    <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+    <vm:MainWindowViewModel/>
+  </Design.DataContext>
+
+  <SplitView IsPaneOpen="True"
+            DisplayMode="CompactInline"
+            CompactPaneLength="48"
+            OpenPaneLength="150"
+            Background="#f3f3f3"
+            PaneBackground="#f3f3f3">
+    <SplitView.Pane>
+      <StackPanel Spacing="5"
+                  Margin="15 30">        
+        <ListBox ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}">
+          <ListBox.Styles>
+            <Style Selector="ListBox ListBoxItem:selected /template/ ContentPresenter">
+              <Setter Property="Background" Value="#ededed"/>
+            </Style>
+          </ListBox.Styles>
+          <ListBox.ItemTemplate>
+            <DataTemplate DataType="{x:Type vm:ItemTemplate}">
+              <StackPanel Spacing="10" Orientation="Horizontal" VerticalAlignment="Center">
+                <Image Source="{Binding ItemIcon}"/>
+                <TextBlock Text="{Binding Label}"/>
+              </StackPanel>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </StackPanel>
+    </SplitView.Pane>
+    <SplitView.Content>
+      <TransitioningContentControl Content="{Binding CurrentPage}" />
+    </SplitView.Content>
+  </SplitView>
+
+</Window>

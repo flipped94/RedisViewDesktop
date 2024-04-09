@@ -1,0 +1,52 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             xmlns:AvaloniaEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
+             xmlns:beha="clr-namespace:RedisViewDesktop.Behaviors"
+             xmlns:md="using:RedisViewDesktop.Models"
+             xmlns:vm="using:RedisViewDesktop.ViewModels"
+             x:DataType="vm:JsonViewModel"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="RedisViewDesktop.Views.JsonView">
+
+
+  <DockPanel LastChildFill="True">
+    <!--key info-->
+    <StackPanel DockPanel.Dock="Top">
+      <StackPanel DockPanel.Dock="Left" Orientation="Horizontal"
+               Margin="10"
+               HorizontalAlignment="Left"
+               VerticalAlignment="Center">
+        <Border CornerRadius="6" Background="{Binding Color}">
+          <TextBlock Text="{Binding Type, DataType={x:Type vm:KeyViewModelBase}}"
+                     Padding="10 1"
+                     Foreground="#ffffff"/>
+        </Border>
+        <TextBlock Text="{Binding Key, DataType={x:Type vm:KeyViewModelBase}}" Margin="10 0 0 0" />
+      </StackPanel>
+      <Border Height="1" Background="#f3f3f3" Margin="0 4"/>
+      <DockPanel LastChildFill="True">
+        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+          <Button Margin="20 0 10 0" Background="Transparent" Command="{Binding DeleteCommand}">
+            <i:Icon Value="mdi-delete" FontSize="20"/>
+          </Button>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+          <Label Margin="10 0 10 0" Content="Key Size:" FontSize="16"/>
+          <TextBlock Text="{Binding MemoryUsage, DataType={x:Type vm:KeyViewModelBase}}" VerticalAlignment="Center" Margin="0 0 10 0" FontSize="16"/>
+          <Label Content="Length:" FontSize="16"/>
+          <TextBlock Text="{Binding Length, DataType={x:Type vm:KeyViewModelBase}}" VerticalAlignment="Center" Margin="0 0 10 0" FontSize="16"/>
+          <Label Content="TTL:" FontSize="16"/>
+          <TextBlock Text="{Binding TTL, DataType={x:Type vm:KeyViewModelBase}}" VerticalAlignment="Center" FontSize="16" />
+        </StackPanel>
+      </DockPanel>
+      <Border Height="1" Background="#f3f3f3" Margin="0 4"/>
+    </StackPanel>
+    <AvaloniaEdit:TextEditor ShowLineNumbers="True"
+                             SyntaxHighlighting="json"
+                             Name="Editor"
+                             FontFamily="Cascadia Code,Consolas,Menlo,Monospace"/>
+  </DockPanel>
+</UserControl>

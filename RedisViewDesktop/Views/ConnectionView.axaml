@@ -1,0 +1,124 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:vm="using:RedisViewDesktop.ViewModels"
+             x:DataType="vm:ConnectionViewModel"
+             Background="Transparent"
+             x:Class="RedisViewDesktop.Views.ConnectionView">
+  <Border Width="240" Background="#fbfbfb" CornerRadius="12 12 12 12">
+    <StackPanel HorizontalAlignment="Center">
+      <!-- Header-->
+      <StackPanel Margin="0 10" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+        <Panel>
+          <Ellipse ZIndex="1" Width="50"
+                 Height="50"
+                 HorizontalAlignment="Center"
+                 VerticalAlignment="Center">
+            <Ellipse.RenderTransform>
+              <RotateTransform Angle="-45"/>
+            </Ellipse.RenderTransform>
+            <Ellipse.Fill>
+              <LinearGradientBrush StartPoint="0%, 90%" EndPoint="91%, 100%">
+                <GradientStops>
+                  <GradientStop Offset="0" Color="{Binding ColorStart}" />
+                  <GradientStop Offset="0.9" Color="{Binding ColorStop}" />
+                  <GradientStop Offset="1" Color="{Binding ColorStop}" />
+                </GradientStops>
+              </LinearGradientBrush>
+            </Ellipse.Fill>
+          </Ellipse>
+          <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" ZIndex="2" Text="{Binding Alias}" />
+        </Panel>
+        <!--<TextBlock Padding="5 18 0 0" Text="{Binding Alias}" Foreground="Black"></TextBlock>-->
+      </StackPanel>
+      <!--Divider-->
+      <StackPanel Margin="0 5" Orientation="Horizontal" HorizontalAlignment="Center">
+        <Border Background="#efeaff" Width="200" Height="2"/>
+        <!--<TextBlock Padding="10 0 " Text="Infomation" Foreground="Black"></TextBlock>
+        <Border Background="#efeaff" Width="60" Height="2"/>-->
+      </StackPanel>
+      <!-- Info -->
+      <StackPanel>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+          <TextBlock Padding="5">
+            <i:Icon Foreground="Black" Value="mdi-format-title" FontSize="20" />
+          </TextBlock>
+          <TextBlock VerticalAlignment="Center" Padding="5 0" Text="{Binding Name}" Foreground="Black"></TextBlock>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Padding="5">
+            <i:Icon Foreground="Black" Value="mdi-web" FontSize="20" />
+          </TextBlock>
+          <TextBlock VerticalAlignment="Center" Padding="5 0" Text="{Binding Hostname}" Foreground="Black"></TextBlock>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Padding="5">
+            <i:Icon Foreground="Black" Value="mdi-connection" FontSize="20" />
+          </TextBlock>
+          <TextBlock VerticalAlignment="Center" Padding="5 0" Text="{Binding ServerType}" Foreground="Black"></TextBlock>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Padding="5">
+            <i:Icon Foreground="Black" Value="mdi-chart-line-variant" FontSize="20" />
+          </TextBlock>
+          <TextBlock VerticalAlignment="Center" Padding="5 0" Text="{Binding LastConnectedTime}" Foreground="Black"></TextBlock>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Padding="5">
+            <i:Icon Foreground="Black" Value="mdi-view-module" FontSize="20" />
+          </TextBlock>
+          <TextBlock VerticalAlignment="Center" Padding="5 0" Text="Redis Stack" Foreground="Black"></TextBlock>
+        </StackPanel>
+      </StackPanel>
+      <!--Divider-->
+      <StackPanel Margin="0 5" Orientation="Horizontal" HorizontalAlignment="Center">
+        <Border Background="#efeaff" Width="200" Height="2"/>
+        <!--<TextBlock Padding="10 0 " Text="Operations" Foreground="Black"></TextBlock>
+        <Border Background="#efeaff" Width="69" Height="2"/>-->
+      </StackPanel>
+      <!-- Ops -->
+      <StackPanel>
+        <StackPanel Name="OpenConnectionBtn" Cursor="Hand"                                      
+                    Orientation="Horizontal">
+          <TextBlock Name="OpenConnectionIcon" Padding="5">
+            <i:Icon Foreground="Black" Value="mdi-open-in-app" FontSize="20">
+              <i:Icon.RenderTransform>
+                <RotateTransform Angle="90"/>
+              </i:Icon.RenderTransform>
+            </i:Icon>
+          </TextBlock>
+          <TextBlock Name="OpenConnectionText" VerticalAlignment="Center" Padding="5 0" Text="Open" Foreground="Black"></TextBlock>
+        </StackPanel>
+        <StackPanel Cursor="Hand" 
+                    Orientation="Horizontal">
+          <TextBlock Padding="5">
+            <i:Icon Foreground="Black" Value="mdi-pencil" FontSize="20" />
+          </TextBlock>
+          <TextBlock VerticalAlignment="Center" Padding="5 0" Text="Edit" Foreground="Black"></TextBlock>
+        </StackPanel>
+        <StackPanel Cursor="Hand"
+                    Margin="0 0 0 5"
+                    Name="DeleteConnectionBtn"
+                    Orientation="Horizontal">
+          <TextBlock Padding="5" Name="DeleteConnectionIcon" >
+            <i:Icon Foreground="Black" Value="mdi-delete" FontSize="20" />
+          </TextBlock>
+          <TextBlock VerticalAlignment="Center" Name="DeleteConnectionText" Padding="5 0" Text="Delete" Foreground="Black"></TextBlock>
+        </StackPanel>
+        <!--Detail-->
+        <StackPanel Cursor="Hand"
+                    Margin="0 0 0 5"
+                    Name="DetailConnectionBtn"
+                    Orientation="Horizontal">
+          <TextBlock Padding="5" Name="DetailConnectionIcon" >
+            <i:Icon Foreground="Black" Value="mdi-information-outline" FontSize="20" />
+          </TextBlock>
+          <TextBlock VerticalAlignment="Center" Name="DetailConnectionText" Padding="5 0" Text="Detail" Foreground="Black"></TextBlock>
+        </StackPanel>
+      </StackPanel>
+    </StackPanel>
+  </Border>
+</UserControl>

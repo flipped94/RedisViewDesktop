@@ -1,0 +1,101 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="https://github.com/projektanker/icons.avalonia"        
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        xmlns:vm="using:RedisViewDesktop.ViewModels"
+        x:DataType="vm:ZSetMemberAddViewModel"
+        x:Class="RedisViewDesktop.Views.ZSetMemberAddWindow"
+        WindowStartupLocation="CenterScreen"
+        Icon="/Assets/16x16.png"
+        Title="AddMembers">
+
+
+  <DockPanel LastChildFill="True" Margin="20">
+    <StackPanel Margin="0 20 0 20" DockPanel.Dock="Bottom" 
+                HorizontalAlignment="Center" 
+                Spacing="30" 
+                Orientation="Horizontal">
+      <Button Name="Cancel" Command="{Binding CancelCommand}" Padding="40 15"
+              BorderBrush="#6f00ff" Foreground="#6f00ff" Background="#ffffff"
+              CornerRadius="30" Content="Cancel">
+        <Button.Styles>
+          <Style Selector="Button#Cancel:pointerover /template/ ContentPresenter" >
+            <Setter Property="Background" Value="#ffffff"/>
+            <Setter Property="Foreground" Value="#6f00ff"/>
+            <Setter Property="BorderBrush" Value="#6f00ff"/>
+          </Style>
+        </Button.Styles>
+      </Button>
+      <Button Name="Save" Command="{Binding SaveCommand}"
+              Padding="40 15" Foreground="#ffffff" Background="#5607bb"
+              CornerRadius="30" Content="Save">
+        <Button.Styles>
+          <Style Selector="Button#Save:pointerover /template/ ContentPresenter" >
+            <Setter Property="Background" Value="#5607bb"/>
+            <Setter Property="Foreground" Value="#ffffff"/>
+          </Style>
+        </Button.Styles>
+      </Button>
+    </StackPanel>
+
+    <DataGrid ItemsSource="{Binding Members}"
+              SelectedItem="{Binding SelectedItem}"
+              IsReadOnly="False"
+              CanUserReorderColumns="False"
+              CanUserSortColumns="False"
+              CanUserResizeColumns="True"
+              GridLinesVisibility="All"
+              BorderThickness="1"
+              BorderBrush="Gray"
+              >
+      <DataGrid.Columns>
+
+        <!--<DataGridTextColumn Header="Member" Binding="{Binding Member}"/>
+        <DataGridTextColumn Header="Score" Binding="{Binding Score}"/>-->
+
+        <DataGridTemplateColumn Width="*">
+          <DataGridTemplateColumn.HeaderTemplate>
+            <DataTemplate>
+              <TextBlock Text="Member"/>
+            </DataTemplate>
+          </DataGridTemplateColumn.HeaderTemplate>
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <TextBox Text="{Binding Member}" Watermark="Enter Member" BorderThickness="0" Background="Transparent"/>
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
+
+        <DataGridTemplateColumn Width="*">
+          <DataGridTemplateColumn.HeaderTemplate>
+            <DataTemplate>
+              <TextBlock Text="Score"/>
+            </DataTemplate>
+          </DataGridTemplateColumn.HeaderTemplate>
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <TextBox Text="{Binding Score}" Watermark="Enter Score" BorderThickness="0" Background="Transparent"/>
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
+
+        <DataGridTemplateColumn Header="Action" Width="*">
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <StackPanel Orientation="Horizontal" Margin="10 0 0 0">
+                <Button Background="Transparent" Cursor="Hand" Margin="20 0 0 0" IsVisible="{Binding ShowDel}" Command="{ReflectionBinding $parent[DataGrid].DataContext.DeleteCommand}">
+                  <i:Icon Value="mdi-delete"/>
+                </Button>
+                <Button Background="Transparent" Cursor="Hand" Margin="20 0 0 0" IsVisible="{Binding ShowAdd}" Command="{ReflectionBinding $parent[DataGrid].DataContext.AddCommand}">
+                  <i:Icon Value="mdi-plus"/>
+                </Button>
+              </StackPanel>
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
+      </DataGrid.Columns>
+    </DataGrid>
+  </DockPanel>
+</Window>

@@ -1,0 +1,45 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:RedisViewDesktop.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="RedisViewDesktop.Views.SetMemberEditWindow"
+        x:DataType="vm:SetMemberEditViewModel"
+        WindowStartupLocation="CenterOwner"
+        x:CompileBindings="True"
+        Width="600"
+        Height="300"
+        Icon="/Assets/16x16.png"
+        Title="EditMember">
+  <StackPanel VerticalAlignment="Center">    
+    <StackPanel Margin="10" Orientation="Horizontal">
+      <Label Content="Member"/>
+      <TextBox Text="{Binding Member}" VerticalAlignment="Stretch" Margin="10 0 0 0"/>
+    </StackPanel>
+    
+    <StackPanel HorizontalAlignment="Center" Spacing="30" Orientation="Horizontal">
+      <Button Name="Cancel" Command="{Binding CancelCommand}" Padding="40 15"
+              BorderBrush="#6f00ff" Foreground="#6f00ff" Background="#ffffff"
+              CornerRadius="30" Content="Cancel">
+        <Button.Styles>
+          <Style Selector="Button#Cancel:pointerover /template/ ContentPresenter" >
+            <Setter Property="Background" Value="#ffffff"/>
+            <Setter Property="Foreground" Value="#6f00ff"/>
+            <Setter Property="BorderBrush" Value="#6f00ff"/>
+          </Style>
+        </Button.Styles>
+      </Button>
+      <Button Name="Edit" Command="{Binding EditCommand}"
+              Padding="40 15" Foreground="#ffffff" Background="#5607bb"
+              CornerRadius="30" Content="Edit">
+        <Button.Styles>
+          <Style Selector="Button#Edit:pointerover /template/ ContentPresenter" >
+            <Setter Property="Background" Value="#5607bb"/>
+            <Setter Property="Foreground" Value="#ffffff"/>
+          </Style>
+        </Button.Styles>
+      </Button>
+    </StackPanel>
+  </StackPanel>
+</Window>

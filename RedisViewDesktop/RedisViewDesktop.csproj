@@ -1,0 +1,131 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>winexe</OutputType>
+    <DebugType>embedded</DebugType>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <PublishSingleFile>true</PublishSingleFile>
+    <TargetFramework>net8.0</TargetFramework>
+    <SelfContained>true</SelfContained>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <Nullable>enable</Nullable>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <Configurations>Debug</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**" />
+    <AvaloniaResource Remove="Assets\Icons.axaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\16x16.png" />
+    <None Remove="Assets\folder-open.png" />
+    <None Remove="Assets\folder.png" />
+    <None Remove="Assets\more.png" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.0.10" />
+    <PackageReference Include="Avalonia.AvaloniaEdit" Version="11.0.6" />
+    <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.10" />
+    <PackageReference Include="Avalonia.Controls.ItemsRepeater" Version="11.0.10" />
+    <PackageReference Include="Avalonia.Controls.TreeDataGrid" Version="11.0.2" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.0.10" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="11.0.0" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.10" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.10" />
+    <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+    <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.10" />
+    <PackageReference Include="AvaloniaEdit.TextMate" Version="11.0.6" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="NRedisStack" Version="0.12.0" />
+    <PackageReference Include="Projektanker.Icons.Avalonia.FontAwesome" Version="9.1.2" />
+    <PackageReference Include="Projektanker.Icons.Avalonia.MaterialDesign" Version="9.1.2" />
+    <PackageReference Include="Serilog" Version="3.1.1" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+    <PackageReference Include="TextMateSharp.Grammars" Version="1.0.56" />
+  </ItemGroup>
+
+
+
+  <ItemGroup>
+    <AvaloniaXaml Update="Assets\Icons.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaXaml>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="RedisViewDesktop.png" CopyToPublishDirectory="PreserveNewest">
+      <LinuxPath>/usr/share/icons/RedisViewDesktop.png</LinuxPath>
+    </Content>
+    <Content Include="RedisViewDesktop.desktop" CopyToPublishDirectory="PreserveNewest">
+      <LinuxPath>/usr/share/applications/RedisViewDesktop.desktop</LinuxPath>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\ConnectionView.axaml.cs">
+      <DependentUpon>ConnectionView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\ConnectionStoreView.axaml.cs">
+      <DependentUpon>ConnectionStoreView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\ConnectionStoreWindow.axaml.cs">
+      <DependentUpon>ConnectionStoreWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\DataBasesPageView.axaml.cs">
+      <DependentUpon>DatabasesPageView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\ServerPageView.axaml.cs">
+      <DependentUpon>ServerPageView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\StreamEntryAddWindow.axaml.cs">
+      <DependentUpon>StreamEntryAddWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\StreamView.axaml.cs">
+      <DependentUpon>StreamView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\SetView.axaml.cs">
+      <DependentUpon>SetView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\ListElementAddWindow.axaml.cs">
+      <DependentUpon>ListElementAddWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\HashFieldAddWindow.axaml.cs">
+      <DependentUpon>HashFieldAddWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\HashFieldEditWindow.axaml.cs">
+      <DependentUpon>HashFieldEditWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\ListElementEditWindow.axaml.cs">
+      <DependentUpon>ListElementEditWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\SetMemberAddWindow.axaml.cs">
+      <DependentUpon>SetMemberAddWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\SetMemberEditWindow.axaml.cs">
+      <DependentUpon>SetMemberEditWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\StreamEntryViewWindow.axaml.cs">
+      <DependentUpon>StreamEntryViewWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\ZSetMemberEditWindow.axaml.cs">
+      <DependentUpon>ZSetMemberEditWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\UnknownView.axaml.cs">
+      <DependentUpon>UnknownView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\HashView.axaml.cs">
+      <DependentUpon>HashView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\ListView.axaml.cs">
+      <DependentUpon>ListView.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+</Project>

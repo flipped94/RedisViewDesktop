@@ -1,0 +1,19 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:RedisViewDesktop.ViewModels"
+        xmlns:views="using:RedisViewDesktop.Views"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        SizeToContent="WidthAndHeight"
+        Background="#ffffff"
+        WindowStartupLocation="CenterScreen"
+        ExtendClientAreaTitleBarHeightHint="0.0"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaToDecorationsHint="True"
+        x:Class="RedisViewDesktop.Views.ConnectionWindow"
+        Icon="/Assets/16x16.png"
+        CornerRadius="12 12 12 12"
+        Title="AddConnection">
+  <views:ConnectionStoreView/>
+</Window>

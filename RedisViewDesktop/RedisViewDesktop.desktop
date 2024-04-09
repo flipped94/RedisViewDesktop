@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=RedisViewDesktop
+Type=Application
+Exec=/usr/share/RedisViewDesktop/RedisViewDesktop
+Icon=/usr/share/icons/RedisViewDesktop.png

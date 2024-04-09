@@ -1,0 +1,419 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             xmlns:beha="clr-namespace:RedisViewDesktop.Behaviors"
+             xmlns:vm="using:RedisViewDesktop.ViewModels"
+             xmlns:md="using:RedisViewDesktop.Models"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="vm:KeysPageViewModel"
+             x:Class="RedisViewDesktop.Views.KeysPageView">
+
+  <Design.DataContext>
+    <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+    <vm:KeysPageViewModel/>
+  </Design.DataContext>
+
+  <UserControl.Styles>
+    <Style Selector="GridSplitter">
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate>
+            <i:Icon Value="mdi-tally-mark-2" FontSize="32" FontWeight="Bold"/>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+      <Setter Property="Background" Value="#acddec"/>
+    </Style>
+    <Style Selector="ListBoxItem">
+      <Setter Property="Margin" Value="0"/>
+      <Setter Property="Padding" Value="5"/>
+    </Style>
+    <Style Selector="Button#LoadMore:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#1c8139"/>
+    </Style>
+    <Style Selector="Button#LoadAll:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#c04048"/>
+    </Style>
+    <Style Selector="Button#Reset:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="Transparent"/>
+    </Style>
+    <Style Selector="Button#AddKeyBtn:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="Transparent"/>
+    </Style>
+    <Style Selector="Button#SearchBtn:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="Transparent"/>
+    </Style>
+  </UserControl.Styles>
+
+  <SplitView IsPaneOpen="{Binding IsOpenCli}"
+             PanePlacement="Right"
+             DisplayMode="Overlay"
+             OpenPaneLength="800">
+    <SplitView.Pane>
+      <DockPanel LastChildFill="True">
+        <DockPanel DockPanel.Dock="Bottom" LastChildFill="True">
+          <Button DockPanel.Dock="Right" Command="{Binding ExecuteCommand}" IsDefault="True" Background="Transparent">
+            <i:Icon Value="mdi-send" FontSize="20"/>
+          </Button>
+          <TextBox Watermark="Enter Command"
+                   Text="{Binding CommandAndArgs}"
+                   DockPanel.Dock="Bottom"
+                   BorderBrush="#cdd7e6"
+                   BorderThickness="2"
+                   VerticalAlignment="Center"
+                   FontSize="16">
+          </TextBox>
+        </DockPanel>
+        <Border Margin="0 0 0 5" Background="#f6f7f9" BorderBrush="#cdd7e6" BorderThickness="1">
+          <ScrollViewer Name="Response">
+            <ListBox ItemsSource="{Binding Results}"
+                     Background="Transparent">
+              <ListBox.ItemTemplate>
+                <DataTemplate>
+                  <Panel >
+                    <Border BorderBrush="#2e2e2e"
+                            BorderThickness="1"
+                            IsVisible="{Binding Success}"
+                            Padding="5">
+                      <SelectableTextBlock FontSize="12"
+                                         FontWeight="Bold"
+                                         Text="{Binding Message}"
+                                         Foreground="Black">
+                      </SelectableTextBlock>
+                    </Border>
+                    <Border BorderBrush="#861b2d"
+                            BorderThickness="1"
+                            IsVisible="{Binding !Success}"
+                            Padding="5">
+                      <SelectableTextBlock FontSize="12"
+                                         FontWeight="Bold"
+                                         Text="{Binding Message}"
+                                         Foreground="Red">
+                      </SelectableTextBlock>
+                    </Border>
+                  </Panel>
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+          </ScrollViewer>
+        </Border>
+      </DockPanel>
+    </SplitView.Pane>
+
+    <SplitView.Content>
+      <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="2*" />
+          <RowDefinition Height="27*" />
+          <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" VerticalAlignment="Center" Margin="0 10 0 10">
+          <DockPanel LastChildFill="True">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="10">
+              <TextBlock Text="{Binding Alias}" Margin="0 8 0 0" />
+              <StackPanel IsVisible="{Binding IsShowDb}">
+                <ComboBox SelectedIndex="{Binding Db}" MaxDropDownHeight="1000" Width="100">
+                  <ComboBoxItem>db0</ComboBoxItem>
+                  <ComboBoxItem>db1</ComboBoxItem>
+                  <ComboBoxItem>db2</ComboBoxItem>
+                  <ComboBoxItem>db3</ComboBoxItem>
+                  <ComboBoxItem>db4</ComboBoxItem>
+                  <ComboBoxItem>db5</ComboBoxItem>
+                  <ComboBoxItem>db6</ComboBoxItem>
+                  <ComboBoxItem>db7</ComboBoxItem>
+                  <ComboBoxItem>db8</ComboBoxItem>
+                  <ComboBoxItem>db9</ComboBoxItem>
+                  <ComboBoxItem>db10</ComboBoxItem>
+                  <ComboBoxItem>db11</ComboBoxItem>
+                  <ComboBoxItem>db12</ComboBoxItem>
+                  <ComboBoxItem>db13</ComboBoxItem>
+                  <ComboBoxItem>db14</ComboBoxItem>
+                  <ComboBoxItem>db15</ComboBoxItem>
+                </ComboBox>
+              </StackPanel>
+            </StackPanel>
+          </DockPanel>
+        </Border>
+
+        <Border Grid.Row="1" Background="#ffffff" >
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="20*" MinWidth="350"/>
+              <ColumnDefinition Width="2"/>
+              <ColumnDefinition Width="50*" MinWidth="600"/>
+            </Grid.ColumnDefinitions>
+            <DockPanel Grid.Column="0" LastChildFill="True">
+              <!--Header-->
+              <Border DockPanel.Dock="Top" BorderThickness="2" BorderBrush="#ededed">
+                <DockPanel LastChildFill="True">
+                  <StackPanel Orientation="Horizontal"
+                              VerticalAlignment="Center"
+                              Margin="0 0 10 0"
+                              DockPanel.Dock="Right">
+                    <RadioButton GroupName="View"
+                                 IsChecked="True"
+                                 Content="List"
+                                 Margin="0 0 5 0"
+                                 Command="{Binding SwitchViewCommand}"
+                                 CommandParameter="List"/>
+                    <RadioButton GroupName="View"
+                                 Content="Tree"
+                                 Command="{Binding SwitchViewCommand}"
+                                 CommandParameter="Tree"/>
+                  </StackPanel>
+                  <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Label Content="Scanned:" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding ScannedKeys}" VerticalAlignment="Center"/>
+                    <TextBlock Text="/" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding DbSize}" VerticalAlignment="Center"/>
+                    <Button Name="Reset"
+                            Command="{Binding ResetCommand}"
+                            Cursor="Hand"
+                            VerticalContentAlignment="Center"
+                            Background="Transparent">
+                      <i:Icon Value="mdi-refresh" FontSize="16"/>
+                    </Button>
+                  </StackPanel>
+                </DockPanel>
+              </Border>
+              <!--keys-->
+              <Border BorderThickness="2" BorderBrush="#ededed">
+                <DockPanel LastChildFill="True">
+                  <StackPanel DockPanel.Dock="Bottom"
+                              Orientation="Horizontal"
+                              HorizontalAlignment="Center"
+                              Margin="20">
+                    <Button Name="LoadMore" Content="Load More"
+                            Command="{Binding LoadMoreCommand}"
+                            IsEnabled="{Binding IsHasMore}"
+                            Background="#1c8139"
+                            HorizontalContentAlignment="Center"
+                            Margin="0 0 10 0" Width="150"/>
+                    <Button Name="LoadAll" Content="Load All"
+                            IsEnabled="{Binding IsHasMore}"
+                            Background="#c04048"
+                            HorizontalContentAlignment="Center"
+                            Margin="0 0 20 0" Width="150"/>
+                  </StackPanel>
+                  <DockPanel DockPanel.Dock="Top" LastChildFill="True">
+                    <Border Margin="5" DockPanel.Dock="Right" BorderBrush="#f3f3f3" HorizontalAlignment="Center" BorderThickness="1" Width="40">
+                      <Button Background="Transparent" Name="AddKeyBtn" HorizontalAlignment="Center">
+                        <i:Icon Value="mdi-plus-box" HorizontalAlignment="Center" FontSize="16"/>
+                      </Button>
+                    </Border>
+                    <Border BorderBrush="#f3f3f3" BorderThickness="1" Margin="5">
+                      <DockPanel LastChildFill="True">
+                        <Button DockPanel.Dock="Right"
+                                Cursor="Hand"
+                                IsDefault="True"
+                                Command="{Binding SearchCommand}"
+                                Background="Transparent"
+                                Name="SearchBtn">
+                          <i:Icon Value="mdi-magnify" FontSize="16"/>
+                        </Button>
+                        <DockPanel LastChildFill="True">
+                          <ComboBox DockPanel.Dock="Left" SelectedIndex="0" BorderThickness="0">
+                            <ComboBoxItem>
+                              <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <TextBlock VerticalAlignment="Center"
+                                           Margin="2 0 0 0"
+                                           Text="All Types"
+                                           FontSize="12"
+                                           HorizontalAlignment="Center"/>
+                              </StackPanel>
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                              <StackPanel Orientation="Horizontal">
+                                <Ellipse Width="8" Height="8" Fill="#cdddf8"/>
+                                <TextBlock VerticalAlignment="Center"
+                                           Margin="2 0 0 0"
+                                           Text="HASH"
+                                           FontSize="12"
+                                           HorizontalAlignment="Center"/>
+                              </StackPanel>
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                              <StackPanel Orientation="Horizontal">
+                                <Ellipse Width="8" Height="8" Fill="#a5d4c3"/>
+                                <TextBlock VerticalAlignment="Center"
+                                           Margin="2 0 0 0"
+                                           Text="LIST"
+                                           FontSize="12"
+                                           HorizontalAlignment="Center"/>
+                              </StackPanel>
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                              <StackPanel Orientation="Horizontal">
+                                <Ellipse Width="8" Height="8" Fill="#d4baa7"/>
+                                <TextBlock VerticalAlignment="Center"
+                                           Margin="2 0 0 0"
+                                           Text="SET"
+                                           FontSize="12"
+                                           HorizontalAlignment="Center"/>
+                              </StackPanel>
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                              <StackPanel Orientation="Horizontal">
+                                <Ellipse Width="8" Height="8" Fill="#d9a0c6"/>
+                                <TextBlock VerticalAlignment="Center"
+                                           Margin="2 0 0 0"
+                                           Text="ZSET"
+                                           FontSize="12"
+                                           HorizontalAlignment="Center"/>
+                              </StackPanel>
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                              <StackPanel Orientation="Horizontal">
+                                <Ellipse Width="8" Height="8" Fill="#c7b0ea"/>
+                                <TextBlock VerticalAlignment="Center"
+                                           Margin="2 0 0 0"
+                                           Text="STRING"
+                                           FontSize="12"
+                                           HorizontalAlignment="Center"/>
+                              </StackPanel>
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                              <StackPanel Orientation="Horizontal">
+                                <Ellipse Width="8" Height="8" Fill="#b8c5db"/>
+                                <TextBlock VerticalAlignment="Center"
+                                           Margin="2 0 0 0"
+                                           Text="JSON"
+                                           FontSize="12"
+                                           HorizontalAlignment="Center"/>
+                              </StackPanel>
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                              <StackPanel Orientation="Horizontal">
+                                <Ellipse Width="8" Height="8" Fill="#c7cea8"/>
+                                <TextBlock VerticalAlignment="Center"
+                                           Margin="2 0 0 0"
+                                           Text="STREAM"
+                                           FontSize="12"
+                                           HorizontalAlignment="Center"/>
+                              </StackPanel>
+                            </ComboBoxItem>
+                          </ComboBox>
+                          <Border BorderBrush="#ededed" BorderThickness="1"/>
+                          <TextBox Text="{Binding Pattern}" Watermark="Key Name or Pattern" BorderThickness="0" />
+                        </DockPanel>
+                      </DockPanel>
+                    </Border>
+                  </DockPanel>
+                  <ScrollViewer Name="KeysScrollViewer" AllowAutoHide="True">
+                    <StackPanel>
+                      <StackPanel HorizontalAlignment="Center"
+                                  Margin="20"
+                                  IsVisible="{Binding !ListNodes.Count}">
+                        <TextBlock Text="No Keys to Display"/>
+                      </StackPanel>
+                      <!--Keys Tree-->
+                      <TreeDataGrid Source="{Binding Source}" 
+                                    ShowColumnHeaders="False"
+                                    IsVisible="{Binding !IsList and ListNodes.Count>0}">
+                        <TreeDataGrid.Resources>
+                          <DataTemplate x:Key="KeyCell" x:DataType="md:KeyNode">
+                            <DockPanel>
+                              <!--key count-->
+                              <StackPanel Margin="0 0 10 0" DockPanel.Dock="Right" Orientation="Horizontal" IsVisible="{Binding !IsKey}">
+                                <TextBlock Padding="0 0 0 0" Text="(" />
+                                <TextBlock Padding="0 0 0 0" Text="{Binding KeyCount}" />
+                                <TextBlock Padding="0 0 0 0" Text=")" />
+                              </StackPanel>
+                              <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+                                <Image Margin="0 0 4 0"
+                                       VerticalAlignment="Center">
+                                  <Image.Source>
+                                    <MultiBinding Converter="{x:Static vm:KeysPageViewModel.FileIconConverter}">
+                                      <Binding Path="IsKey"/>
+                                      <Binding Path="IsOpen"/>
+                                    </MultiBinding>
+                                  </Image.Source>
+                                </Image>
+                                <Border IsVisible="{Binding IsKey}"
+                                        CornerRadius="6"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        Background="{Binding Color}">
+                                  <!--key type-->
+                                  <TextBlock Padding="10 1 10 1"
+                                             VerticalAlignment="Center"
+                                             HorizontalAlignment="Center"
+                                             FontSize="12"
+                                             FontWeight="Bold"
+                                             Text="{Binding Type}"
+                                             Foreground="#ffffff"/>
+                                </Border>
+                                <TextBlock Margin="2 0 0 0" Text="{Binding Name}" VerticalAlignment="Center"/>
+                              </StackPanel>
+                            </DockPanel>
+                          </DataTemplate>
+                        </TreeDataGrid.Resources>
+                      </TreeDataGrid>
+                      <!--key list-->
+                      <ListBox ItemsSource="{Binding ListNodes}"
+                               Background="#ffffff"
+                               SelectedItem="{Binding SelectedNode}"
+                               IsVisible="{Binding IsList and ListNodes.Count>0}">
+                        <ListBox.ItemTemplate>
+                          <DataTemplate>
+                            <Border>
+                              <StackPanel Orientation="Horizontal">
+                                <Border CornerRadius="6"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        Background="{Binding Color}">
+                                  <TextBlock Padding="10 2 10 2"
+                                             VerticalAlignment="Center"
+                                             HorizontalAlignment="Center"
+                                             FontSize="12"
+                                             FontWeight="Bold"
+                                             Text="{Binding Type}"
+                                             Foreground="#ffffff"/>
+                                </Border>
+                                <TextBlock Text="{Binding Name}"
+                                           Margin="10 0 0 0"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Center"/>
+                              </StackPanel>
+                            </Border>
+                          </DataTemplate>
+                        </ListBox.ItemTemplate>
+                      </ListBox>
+                    </StackPanel>
+                  </ScrollViewer>
+                </DockPanel>
+              </Border>
+            </DockPanel>
+            <GridSplitter Margin="10 0 0 0" Grid.Column="1" ResizeDirection="Columns" />
+            <!--value-->
+            <Border Margin="10 0 0 0"
+                    BorderBrush="#ededed"
+                    BorderThickness="2"
+                    Grid.Column="2"
+                    Background="#ffffff">
+              <TransitioningContentControl Content="{Binding CurrentPage}" />
+            </Border>
+          </Grid>
+        </Border>
+
+        <!--bottom tools-->
+        <StackPanel Grid.Row="2"
+                    Background="Transparent"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Left">
+          <Button Background="Transparent" Command="{Binding OpenCliCommand}">
+            <i:Icon Value="mdi-console"/>
+          </Button>
+        </StackPanel>
+      </Grid>
+    </SplitView.Content>
+
+  </SplitView>
+
+</UserControl>

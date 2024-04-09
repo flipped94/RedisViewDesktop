@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34607.119
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedisViewDesktop", "RedisViewDesktop\RedisViewDesktop.csproj", "{DBDD9CE3-9DD5-4EE6-8DD2-D25C5DCB1521}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedisViewDesktopTest", "RedisViewDesktopTest\RedisViewDesktopTest.csproj", "{288D2A97-980D-4F2C-9D11-29553FA31974}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DBDD9CE3-9DD5-4EE6-8DD2-D25C5DCB1521}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBDD9CE3-9DD5-4EE6-8DD2-D25C5DCB1521}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{288D2A97-980D-4F2C-9D11-29553FA31974}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{288D2A97-980D-4F2C-9D11-29553FA31974}.Debug|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {21A5870A-C283-4640-BE03-97AE4BB6FC59}
+	EndGlobalSection
+EndGlobal

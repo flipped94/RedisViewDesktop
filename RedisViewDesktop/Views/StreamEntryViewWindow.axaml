@@ -1,0 +1,30 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:AvaloniaEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
+        xmlns:i="https://github.com/projektanker/icons.avalonia"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        xmlns:vm="using:RedisViewDesktop.ViewModels"
+        x:DataType="vm:StreamEntryViewViewModel"
+        x:Class="RedisViewDesktop.Views.StreamEntryViewWindow"
+        WindowStartupLocation="CenterScreen"
+        Icon="/Assets/16x16.png"
+        Title="AddMembers">
+
+  <StackPanel Orientation="Vertical" Margin="20">
+    <Label Content="ID"/>  
+    <TextBlock Text="{Binding EntryID}"
+               Background="#f5f7fa"
+               Margin="0 10 0 0"
+               Padding="10"/>
+    <Label Content="Value" Margin="0 10 0 0"/>
+    <Border BorderThickness="1" BorderBrush="#dcdfe6" CornerRadius="10" VerticalAlignment="Stretch" Padding="10">
+      <AvaloniaEdit:TextEditor Margin="0 10 0 0" ShowLineNumbers="False"
+                             SyntaxHighlighting="json"
+                             Name="Editor"
+                             FontFamily="Cascadia Code,Consolas,Menlo,Monospace"/>
+    </Border>
+  </StackPanel>
+
+</Window>

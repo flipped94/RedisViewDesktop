@@ -1,0 +1,104 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             xmlns:beha="clr-namespace:RedisViewDesktop.Behaviors"
+             xmlns:md="using:RedisViewDesktop.Models"
+             xmlns:vm="using:RedisViewDesktop.ViewModels"
+             x:DataType="vm:StreamViewModel"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="RedisViewDesktop.Views.StreamView">
+  <UserControl.Styles>
+    <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="Transparent"/>
+    </Style>
+    <Style Selector="DataGridRow">
+      <Setter Property="Background" Value="#f6f7f9"/>
+    </Style>
+    <Style Selector="DataGridRow:nth-child(even)">
+      <Setter Property="Background" Value="White"/>
+    </Style>
+    <Style Selector="DataGridColumnHeader">
+      <Setter Property="BorderThickness" Value="1"/>
+      <!--<Setter Property="BorderBrush" Value="#dedfe1" />-->
+      <Setter Property="Margin" Value="0"/>
+    </Style>
+  </UserControl.Styles>
+
+  <DockPanel LastChildFill="True">
+    <!--key info-->
+    <StackPanel DockPanel.Dock="Top">
+      <StackPanel DockPanel.Dock="Left" Orientation="Horizontal"
+               Margin="10"
+               HorizontalAlignment="Left"
+               VerticalAlignment="Center">
+        <Border CornerRadius="6" Background="{Binding Color}">
+          <TextBlock Text="{Binding Type, DataType={x:Type vm:KeyViewModelBase}}"
+                     Padding="10 1"
+                     Foreground="#ffffff"/>
+        </Border>
+        <TextBlock Text="{Binding Key, DataType={x:Type vm:KeyViewModelBase}}" Margin="10 0 0 0" />
+      </StackPanel>
+      <Border Height="1" Background="#f3f3f3" Margin="0 4"/>
+      <DockPanel LastChildFill="True">
+        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">         
+          <!--add entries-->
+          <Border BorderThickness="2" BorderBrush="#ededed" CornerRadius="3" beha:TappedBehav.Command="{Binding AddEntriesCommand}">
+            <DockPanel VerticalAlignment="Center">
+              <TextBlock DockPanel.Dock="Left" Text="Add Entries" VerticalAlignment="Center" Padding="10 0 0 0"/>
+              <Button DockPanel.Dock="Right" Background="Transparent">
+                <i:Icon Value="mdi-plus" Margin="0 0 10 0" FontSize="20"/>
+              </Button>
+            </DockPanel>
+          </Border>
+          <Button Margin="20 0 10 0" Background="Transparent" Command="{Binding DeleteCommand}">
+            <i:Icon Value="mdi-delete" FontSize="20"/>
+          </Button>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+          <Label Margin="10 0 10 0" Content="Key Size:" FontSize="16"/>
+          <TextBlock Text="{Binding MemoryUsage, DataType={x:Type vm:KeyViewModelBase}}" VerticalAlignment="Center" Margin="0 0 10 0" FontSize="16"/>
+          <Label Content="Entries:" FontSize="16"/>
+          <TextBlock Text="{Binding Length, DataType={x:Type vm:KeyViewModelBase}}" VerticalAlignment="Center" Margin="0 0 10 0" FontSize="16"/>
+          <Label Content="TTL:" FontSize="16"/>
+          <TextBlock Text="{Binding TTL, DataType={x:Type vm:KeyViewModelBase}}" VerticalAlignment="Center" FontSize="16" />
+        </StackPanel>
+      </DockPanel>
+      <Border Height="1" Background="#f3f3f3" Margin="0 4"/>
+    </StackPanel>
+    <!--member and score-->
+    <DockPanel Margin="20 10 20 10">
+      <DataGrid Name="MemberDataGrid"
+                ItemsSource="{Binding Content}"
+                SelectedItem="{Binding SelectedEntry}"
+                CanUserReorderColumns="False"
+                CanUserResizeColumns="True"
+                CanUserSortColumns="True"
+                GridLinesVisibility="All"
+                IsReadOnly="True"
+                BorderThickness="1"
+                BorderBrush="Gray">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="ID" Width="*" Binding="{Binding EntryID}"/>
+          <DataGridTextColumn Header="Value" Width="*" Binding="{Binding Value}"/>
+
+          <DataGridTemplateColumn Header="Action" Width="*">
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <StackPanel Orientation="Horizontal" Margin="10 0 0 0">                 
+                  <Button Background="Transparent" Cursor="Hand" Command="{ReflectionBinding $parent[DataGrid].DataContext.ViewEnrtyCommand}">
+                    <i:Icon Value="mdi-eye"/>
+                  </Button>
+                  <Button Background="Transparent" Cursor="Hand" Margin="20 0 0 0" Command="{ReflectionBinding $parent[DataGrid].DataContext.DeleteEntryCommand}">
+                    <i:Icon Value="mdi-delete"/>
+                  </Button>
+                </StackPanel>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+        </DataGrid.Columns>
+      </DataGrid>
+    </DockPanel>
+  </DockPanel>
+</UserControl>
