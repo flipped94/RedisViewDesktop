@@ -50,59 +50,12 @@
     </Style>
   </UserControl.Styles>
 
-  <SplitView IsPaneOpen="{Binding IsOpenCli}"
+  <SplitView IsPaneOpen="{Binding IsPaneOpen, Mode=TwoWay}"
              PanePlacement="Right"
              DisplayMode="Overlay"
              OpenPaneLength="800">
     <SplitView.Pane>
-      <DockPanel LastChildFill="True">
-        <DockPanel DockPanel.Dock="Bottom" LastChildFill="True">
-          <Button DockPanel.Dock="Right" Command="{Binding ExecuteCommand}" IsDefault="True" Background="Transparent">
-            <i:Icon Value="mdi-send" FontSize="20"/>
-          </Button>
-          <TextBox Watermark="Enter Command"
-                   Text="{Binding CommandAndArgs}"
-                   DockPanel.Dock="Bottom"
-                   BorderBrush="#cdd7e6"
-                   BorderThickness="2"
-                   VerticalAlignment="Center"
-                   FontSize="16">
-          </TextBox>
-        </DockPanel>
-        <Border Margin="0 0 0 5" Background="#f6f7f9" BorderBrush="#cdd7e6" BorderThickness="1">
-          <ScrollViewer Name="Response">
-            <ListBox ItemsSource="{Binding Results}"
-                     Background="Transparent">
-              <ListBox.ItemTemplate>
-                <DataTemplate>
-                  <Panel >
-                    <Border BorderBrush="#2e2e2e"
-                            BorderThickness="1"
-                            IsVisible="{Binding Success}"
-                            Padding="5">
-                      <SelectableTextBlock FontSize="12"
-                                         FontWeight="Bold"
-                                         Text="{Binding Message}"
-                                         Foreground="Black">
-                      </SelectableTextBlock>
-                    </Border>
-                    <Border BorderBrush="#861b2d"
-                            BorderThickness="1"
-                            IsVisible="{Binding !Success}"
-                            Padding="5">
-                      <SelectableTextBlock FontSize="12"
-                                         FontWeight="Bold"
-                                         Text="{Binding Message}"
-                                         Foreground="Red">
-                      </SelectableTextBlock>
-                    </Border>
-                  </Panel>
-                </DataTemplate>
-              </ListBox.ItemTemplate>
-            </ListBox>
-          </ScrollViewer>
-        </Border>
-      </DockPanel>
+      <TransitioningContentControl Content="{Binding SplitViewPane,Mode=TwoWay}" />
     </SplitView.Pane>
 
     <SplitView.Content>
@@ -211,7 +164,6 @@
                       <DockPanel LastChildFill="True">
                         <Button DockPanel.Dock="Right"
                                 Cursor="Hand"
-                                IsDefault="True"
                                 Command="{Binding SearchCommand}"
                                 Background="Transparent"
                                 Name="SearchBtn">
@@ -407,9 +359,9 @@
                     Background="Transparent"
                     Orientation="Horizontal"
                     HorizontalAlignment="Left">
-          <Button Background="Transparent" Command="{Binding OpenCliCommand}">
+          <Button Background="Transparent" Command="{Binding OpenPaneCommand}" CommandParameter="cli">
             <i:Icon Value="mdi-console"/>
-          </Button>
+          </Button>          
         </StackPanel>
       </Grid>
     </SplitView.Content>

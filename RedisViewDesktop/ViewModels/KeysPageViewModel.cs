@@ -91,24 +91,25 @@ namespace RedisViewDesktop.ViewModels
             }
         }
 
-        public ReactiveCommand<string, Unit> SwitchViewCommand { get; }
-
-        private bool isOpenCli = false;
-        public bool IsOpenCli
+        private ViewModelBase? splitViewPane;
+        public ViewModelBase? SplitViewPane
         {
-            get => isOpenCli;
+            get => splitViewPane;
             set
             {
-                this.RaiseAndSetIfChanged(ref isOpenCli, value);
+                this.RaiseAndSetIfChanged(ref splitViewPane, value);
             }
         }
 
-        private string commandAndArgs;
-        public string CommandAndArgs
+        public ReactiveCommand<string, Unit> SwitchViewCommand { get; }
+
+        private bool isPaneOpen = false;
+        public bool IsPaneOpen
         {
-            get => commandAndArgs; set
+            get => isPaneOpen;
+            set
             {
-                this.RaiseAndSetIfChanged(ref commandAndArgs, value);
+                this.RaiseAndSetIfChanged(ref isPaneOpen, value);
             }
         }
 
@@ -122,9 +123,7 @@ namespace RedisViewDesktop.ViewModels
             }
         }
 
-        public ICommand OpenCliCommand { get; }
-
-        public ICommand ExecuteCommand { get; }
+        public ReactiveCommand<string, Unit> OpenPaneCommand { get; }
 
         public ICommand LoadMoreCommand { get; }
 
@@ -159,15 +158,21 @@ namespace RedisViewDesktop.ViewModels
                 }
             });
 
-            OpenCliCommand = ReactiveCommand.Create(() =>
+            OpenPaneCommand = ReactiveCommand.Create<string>((pane) =>
             {
-                IsOpenCli = !IsOpenCli;
-            });
-
-            ExecuteCommand = ReactiveCommand.Create(async () =>
-            {
-                await Exexute();
-                CommandAndArgs = "";
+                Type? paneType = PaneHelper.GetPane(pane);
+                if (paneType != null)
+                {
+                    ViewModelBase paneView = (ViewModelBase)Activator.CreateInstance(paneType);
+                    if (paneView != null)
+                    {
+                        SplitViewPane = paneView;
+                        if (!IsPaneOpen)
+                        {
+                            IsPaneOpen = !IsPaneOpen;
+                        }
+                    }
+                }
             });
 
             LoadMoreCommand = ReactiveCommand.Create(async () =>
@@ -271,7 +276,7 @@ namespace RedisViewDesktop.ViewModels
             ScanKeyResponse response = await RedisHelper.Scan(Request, isInit);
             IsHasMore = response.ShowMore;
             Request.NodeCursor = response.NodeCursor;
-            ScannedKeys += response.Keys.Count;                
+            ScannedKeys += response.Keys.Count;
             var listNodes = KeyHelper.BuildListNodes(response.Keys);
             ListNodes.AddRange(listNodes);
 
@@ -291,50 +296,11 @@ namespace RedisViewDesktop.ViewModels
 
         public void Reset()
         {
-            ScannedKeys=0;
+            ScannedKeys = 0;
             KeysTree.Clear();
             TreeNodeDict.Clear();
             ListNodes.Clear();
             Request = new ScanKeyQequestBuilder().Build();
-        }
-
-        public ObservableCollection<ExecuteResult> Results { get; } = [];
-
-        public async Task Exexute()
-        {
-            if (string.IsNullOrEmpty(CommandAndArgs))
-            {
-                return;
-            }
-            var cmas = CommandAndArgs.Split(" ");
-            ExecuteResult executeResult;
-            if (cmas.Length == 1)
-            {
-                executeResult = await RedisHelper.ExecuteAsync(cmas[0], null);
-            }
-            else
-            {
-                object[] args = new object[cmas.Length - 1];
-                for (int i = 1; i < cmas.Length; i++)
-                {
-                    args[i - 1] = cmas[i];
-                }
-                executeResult = await RedisHelper.ExecuteAsync(cmas[0], args);
-            }
-            if (null == executeResult)
-            {
-                return;
-            }
-
-            var c = string.Join("\t", cmas);
-            executeResult.Message = $"Command:\t{c}\r\n" + executeResult.Message;
-            Results.Add(executeResult);
-
-        }
-
-        public void ClearResults()
-        {
-            Results.Clear();
         }
 
         private static IconConverter? s_iconConverter;

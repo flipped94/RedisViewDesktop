@@ -70,6 +70,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\PaneCliView.axaml.cs">
+      <DependentUpon>PaneCliView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\ConnectionView.axaml.cs">
       <DependentUpon>ConnectionView.axaml</DependentUpon>
     </Compile>

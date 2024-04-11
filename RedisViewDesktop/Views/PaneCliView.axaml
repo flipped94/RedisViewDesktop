@@ -1,0 +1,85 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:vm="using:RedisViewDesktop.ViewModels"
+             x:DataType="vm:PaneCliViewModel"
+             x:Class="RedisViewDesktop.Views.PaneCliView">
+
+  <Design.DataContext>
+    <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+    <vm:PaneCliViewModel/>
+  </Design.DataContext>
+
+  <DockPanel LastChildFill="True">
+    <Border DockPanel.Dock="Top" Background="#f6f7f9" BorderBrush="#cdd7e6" BorderThickness="1">
+      <ScrollViewer Name="Response">
+        <ListBox ItemsSource="{Binding Results}"
+                 Background="Transparent">
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <Panel >
+                <Border BorderBrush="#2e2e2e"
+                        BorderThickness="1"
+                        IsVisible="{Binding Success}"
+                        Padding="5">
+                  <SelectableTextBlock FontSize="12"
+                                     FontWeight="Bold"
+                                     Text="{Binding Message}"
+                                     Foreground="Black">
+                  </SelectableTextBlock>
+                </Border>
+                <Border BorderBrush="#861b2d"
+                        BorderThickness="1"
+                        IsVisible="{Binding !Success}"
+                        Padding="5">
+                  <SelectableTextBlock FontSize="12"
+                                     FontWeight="Bold"
+                                     Text="{Binding Message}"
+                                     Foreground="Red">
+                  </SelectableTextBlock>
+                </Border>
+              </Panel>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </ScrollViewer>
+    </Border>
+    <DockPanel DockPanel.Dock="Bottom" LastChildFill="True">
+      <Button DockPanel.Dock="Right" Command="{Binding ExecuteCommand}" Background="Transparent">
+        <i:Icon Value="mdi-send" FontSize="20"/>
+      </Button>
+      <TextBox TextChanged="TextBox_TextChanged" Watermark="Enter Command"
+               Text="{Binding CommandAndArgs}"
+               DockPanel.Dock="Bottom"
+               BorderBrush="#cdd7e6"
+               BorderThickness="2"
+               VerticalAlignment="Center"
+               FontSize="16">
+      </TextBox>
+    </DockPanel>
+    <DockPanel LastChildFill="True">
+      <ScrollViewer DockPanel.Dock="Bottom">
+        <ListBox ItemsSource="{Binding Hints}"
+                 Background="#ffffff"
+                 SelectedItem="{Binding SelectedCommand}"
+                 IsVisible="{Binding Hints.Count>0}">
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <Border>
+                <TextBlock Text="{Binding}"
+                           Margin="10 0 0 0"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Left"/>
+              </Border>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </ScrollViewer>
+      <Border/>
+    </DockPanel>
+  </DockPanel>
+</UserControl>
