@@ -91,24 +91,8 @@ namespace RedisViewDesktop.Helpers
 
         public static async Task<ExecuteResult> ScriptEvaluateAsync(string script, List<string>? keys = null, List<string>? values = null)
         {
-            RedisKey[]? ks = null;
-            if (keys != null)
-            {
-                ks = new RedisKey[keys.Count];
-                for (var i = 0; i < keys.Count; i++)
-                {
-                    ks[i] = keys[i];
-                }
-            }
-            RedisValue[]? vs = null;
-            if (values != null)
-            {
-                vs = new RedisValue[values.Count];
-                for (var i = 0; i < values.Count; i++)
-                {
-                    vs[i] = values[i];
-                }
-            }
+            var ks = keys?.Select(x => new RedisKey(x)).ToArray();
+            var vs = values?.Select(x => new RedisValue(x)).ToArray();
             try
             {
                 var res = await database.ScriptEvaluateAsync(script, ks, vs);
