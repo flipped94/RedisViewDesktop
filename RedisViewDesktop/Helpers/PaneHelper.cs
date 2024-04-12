@@ -9,6 +9,7 @@ namespace RedisViewDesktop.Helpers
         private static readonly Dictionary<string, Type> SpliePaneDict = new Dictionary<string, Type>()
         {
             {"cli", typeof(PaneCliViewModel)},
+            {"lua", typeof(PaneLuaViewModel)},
         };
 
         public static Type? GetPane(string pane)

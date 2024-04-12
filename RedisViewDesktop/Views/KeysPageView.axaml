@@ -265,7 +265,7 @@
                         <TextBlock Text="No Keys to Display"/>
                       </StackPanel>
                       <!--Keys Tree-->
-                      <TreeDataGrid Source="{Binding Source}" 
+                      <TreeDataGrid Source="{Binding Source}"
                                     ShowColumnHeaders="False"
                                     IsVisible="{Binding !IsList and ListNodes.Count>0}">
                         <TreeDataGrid.Resources>
@@ -361,7 +361,10 @@
                     HorizontalAlignment="Left">
           <Button Background="Transparent" Command="{Binding OpenPaneCommand}" CommandParameter="cli">
             <i:Icon Value="mdi-console"/>
-          </Button>          
+          </Button>
+          <Button Background="Transparent" Command="{Binding OpenPaneCommand}" CommandParameter="lua">
+            <i:Icon Value="mdi-language-lua"/>
+          </Button>
         </StackPanel>
       </Grid>
     </SplitView.Content>

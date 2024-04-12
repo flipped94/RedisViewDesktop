@@ -89,6 +89,39 @@ namespace RedisViewDesktop.Helpers
 
         }
 
+        public static async Task<ExecuteResult> ScriptEvaluateAsync(string script, List<string>? keys = null, List<string>? values = null)
+        {
+            RedisKey[]? ks = null;
+            if (keys != null)
+            {
+                ks = new RedisKey[keys.Count];
+                for (var i = 0; i < keys.Count; i++)
+                {
+                    ks[i] = keys[i];
+                }
+            }
+            RedisValue[]? vs = null;
+            if (values != null)
+            {
+                vs = new RedisValue[values.Count];
+                for (var i = 0; i < values.Count; i++)
+                {
+                    vs[i] = values[i];
+                }
+            }
+            try
+            {
+                var res = await database.ScriptEvaluateAsync(script, ks, vs);
+                return new ExecuteResult(true, CliOutputHelper.Format(res));
+            }
+            catch (Exception e)
+            {
+                Log.Error("script execute error: ", script, ks, values);
+                return new ExecuteResult(false, RedisResult.Create(new RedisValue(e.Message)));
+            }
+
+        }
+
         public static async Task<Dictionary<string, object>> Info()
         {
             var redisResult = await database.ExecuteAsync("INFO");

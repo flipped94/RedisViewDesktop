@@ -1,0 +1,157 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             xmlns:AvaloniaEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
+             xmlns:vm="using:RedisViewDesktop.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="vm:PaneLuaViewModel"
+             x:Class="RedisViewDesktop.Views.PaneLuaView">
+  <Design.DataContext>
+    <vm:PaneLuaViewModel/>
+  </Design.DataContext>
+
+  <UserControl.Styles>
+    <Style Selector="Button#RunScriptBtn:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#e6e6e6"/>
+    </Style>
+  </UserControl.Styles>
+
+  <DockPanel LastChildFill="True">
+    <Panel DockPanel.Dock="Bottom" Margin="10" Height="150">      
+      <ScrollViewer Name="InputScroll" AllowAutoHide="True">
+        <Panel >
+          <Border BorderBrush="#808080"
+                  BorderThickness="1"
+                  Padding="5">
+            <TextBlock FontSize="12"
+                       TextWrapping="Wrap"
+                       FontWeight="Bold"
+                       Text="{Binding Result.Message}"
+                       Foreground="Black">
+            </TextBlock>
+          </Border>
+          <Border BorderBrush="#808080"
+                  BorderThickness="1"
+                  Padding="5">
+            <TextBlock FontSize="12"
+                       FontWeight="Bold"
+                       TextWrapping="Wrap"
+                       IsVisible="{Binding !Result.Success}"
+                       Text="{Binding Result.Message}"
+                       Foreground="Red">
+            </TextBlock>
+          </Border>
+        </Panel>
+      </ScrollViewer>
+    </Panel>
+    <DockPanel LastChildFill="True">
+      <Button Name="RunScriptBtn"
+              DockPanel.Dock="Bottom" 
+              Background="#e6e6e6"
+              Margin="10" 
+              Click="RunScript" 
+              Content="Run"/>
+      <DockPanel LastChildFill="True">
+        <StackPanel Orientation="Horizontal" Margin="10" DockPanel.Dock="Bottom">
+          <Panel Width="390" Height="200">
+            <ScrollViewer>
+              <DataGrid ItemsSource="{Binding Keys}"
+                      SelectedItem="{Binding SelectedKey}"
+                      IsReadOnly="False"
+                      CanUserReorderColumns="False"
+                      CanUserSortColumns="False"
+                      CanUserResizeColumns="False"
+                      GridLinesVisibility="All"
+                      BorderThickness="1"
+                      BorderBrush="Gray">
+                <DataGrid.Columns>
+                  <DataGridTemplateColumn Width="*">
+                    <DataGridTemplateColumn.HeaderTemplate>
+                      <DataTemplate>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                          <TextBlock Text="Keys" VerticalAlignment="Center"/>
+                          <Button DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" Background="Transparent" Cursor="Hand" Margin="20 0 0 0" Command="{ReflectionBinding $parent[DataGrid].DataContext.AddKeyCommand}">
+                            <i:Icon Value="mdi-plus"/>
+                          </Button>
+                        </StackPanel>
+                      </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate>
+                        <TextBox Text="{Binding Element}" Watermark="Enter Key" BorderThickness="0" Background="Transparent"/>
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+                  <DataGridTemplateColumn Header="Action" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate>
+                        <StackPanel Orientation="Horizontal" Margin="10 0 0 0">
+                          <Button Background="Transparent" Cursor="Hand" Margin="20 0 0 0" Command="{ReflectionBinding $parent[DataGrid].DataContext.RemoveKeyCommand}">
+                            <i:Icon Value="mdi-delete"/>
+                          </Button>
+                        </StackPanel>
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+                </DataGrid.Columns>
+              </DataGrid>
+            </ScrollViewer>
+          </Panel>
+          <Panel Width="390" Height="200">
+            <ScrollViewer>
+              <DataGrid ItemsSource="{Binding Values}"
+                        SelectedItem="{Binding SelectedValue}"
+                        IsReadOnly="False"
+                        CanUserReorderColumns="False"
+                        CanUserSortColumns="False"
+                        CanUserResizeColumns="False"
+                        GridLinesVisibility="All"
+                        BorderThickness="1"
+                        BorderBrush="Gray">
+                <DataGrid.Columns>
+                  <DataGridTemplateColumn Width="*">
+                    <DataGridTemplateColumn.HeaderTemplate>
+                      <DataTemplate>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                          <TextBlock Text="Values" DockPanel.Dock="Left" VerticalAlignment="Center"/>
+                          <Button DockPanel.Dock="Right" HorizontalAlignment="Right" Background="Transparent" Cursor="Hand" Margin="20 0 0 0" Command="{ReflectionBinding $parent[DataGrid].DataContext.AddValueCommand}">
+                            <i:Icon Value="mdi-plus"/>
+                          </Button>
+                        </StackPanel>
+                      </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate>
+                        <TextBox Text="{Binding Element}" Watermark="Enter Value" BorderThickness="0" Background="Transparent"/>
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+                  <DataGridTemplateColumn Header="Action" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate>
+                        <StackPanel Orientation="Horizontal" Margin="10 0 0 0">
+                          <Button Background="Transparent" Cursor="Hand" Margin="20 0 0 0" Command="{ReflectionBinding $parent[DataGrid].DataContext.RemoveValueCommand}">
+                            <i:Icon Value="mdi-delete"/>
+                          </Button>
+                        </StackPanel>
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+                </DataGrid.Columns>
+              </DataGrid>
+            </ScrollViewer>
+          </Panel>
+        </StackPanel>
+        <Border Margin="10" BorderBrush="#e6e6e6" BorderThickness="1">
+          <AvaloniaEdit:TextEditor Text=""
+                                   ShowLineNumbers="True"
+                                   SyntaxHighlighting="lua"
+                                   Name="Editor"
+                                   FontFamily="Cascadia Code,Consolas,Menlo,Monospace"/>
+        </Border>
+      </DockPanel>
+    </DockPanel>
+  </DockPanel>
+</UserControl>
