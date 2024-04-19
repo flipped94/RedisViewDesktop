@@ -1,6 +1,6 @@
 # RedisViewDesktop
 
-RedisViewDesktop is a cross-platform Redis visualization tool based on AvaloniaUI. It supports multiple data types: String, Hash, Set, List, JSON. and remote CLI.
+Redisktop is a cross-platform Redis visualization tool based on AvaloniaUI, supporting String, Hash, Set, ZSet, List, JSON, Stream and other data structures. Also supports execution of command line and Lua scripts.
 
 #### Add New Collection
 
