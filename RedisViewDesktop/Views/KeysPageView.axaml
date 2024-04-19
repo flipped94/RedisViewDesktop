@@ -156,7 +156,7 @@
                   </StackPanel>
                   <DockPanel DockPanel.Dock="Top" LastChildFill="True">
                     <Border Margin="5" DockPanel.Dock="Right" BorderBrush="#f3f3f3" HorizontalAlignment="Center" BorderThickness="1" Width="40">
-                      <Button Background="Transparent" Name="AddKeyBtn" HorizontalAlignment="Center">
+                      <Button Background="Transparent" Name="AddKeyBtn" Command="{Binding NewKeyCommand}" HorizontalAlignment="Center">
                         <i:Icon Value="mdi-plus-box" HorizontalAlignment="Center" FontSize="16"/>
                       </Button>
                     </Border>

@@ -1,0 +1,80 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:RedisViewDesktop.ViewModels"
+        xmlns:md="using:RedisViewDesktop.Models"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="RedisViewDesktop.Views.NewKeyWindow"
+        x:DataType="vm:NewKeyViewModel"
+        WindowStartupLocation="CenterOwner"
+        Width="500"
+        Height="300"
+        Icon="/Assets/16x16.png"
+        Title="NewKey">
+
+  <Design.DataContext>
+    <vm:NewKeyViewModel/>
+  </Design.DataContext>
+
+  <Window.Styles>
+    <Style Selector="Button#CancelBtn:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="Transparent"/>
+    </Style>
+    <Style Selector="Button#AddKeyBtn:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#66b1ff"/>
+    </Style>
+  </Window.Styles>
+
+  <StackPanel VerticalAlignment="Center" Margin="20">
+    <Label Content="Key"/>
+    <TextBox Watermark="Input Key" Text="{Binding Key}"/>
+    <Label Content="Value" Margin="0 20 0 0"/>
+    <Border BorderThickness="1" BorderBrush="#ededed">
+      <ComboBox Name="KeyComBox"
+                HorizontalAlignment="Stretch"
+                SelectedItem="{Binding SelectedItem,Mode=TwoWay}"
+                DockPanel.Dock="Left"
+                BorderThickness="0">
+        <ComboBox.ItemTemplate>
+          <DataTemplate x:DataType="md:NewKey">
+            <StackPanel Orientation="Horizontal">
+              <Ellipse Width="8" Height="8" Fill="{Binding Fill}" />
+              <TextBlock VerticalAlignment="Center"
+                         Margin="2 0 0 0"
+                         Text="{Binding KeyType}"
+                         FontSize="12"
+                         HorizontalAlignment="Center"/>
+            </StackPanel>
+          </DataTemplate>
+        </ComboBox.ItemTemplate>
+      </ComboBox>
+    </Border>
+    <Panel>
+      <StackPanel Margin="0 20 0 0"
+                  Spacing="10"
+                  Orientation="Horizontal"
+                  HorizontalAlignment="Right">
+        <Button Name="CancelBtn"
+                Command="{Binding CancelCommand}"
+                BorderThickness="1"
+                BorderBrush="#ededed"
+                Background="Transparent"
+                HorizontalContentAlignment="Center"
+                VerticalAlignment="Center"
+                Width="80"
+                Content="Cancel" />
+        <Button Name="AddKeyBtn"
+                Command="{Binding AddComand}"
+                BorderThickness="1"
+                BorderBrush="#ededed"
+                Background="#66b1ff"
+                IsEnabled="{Binding IsEnabled}"
+                HorizontalContentAlignment="Center"
+                VerticalAlignment="Center"
+                Width="80"
+                Content="Add"/>
+      </StackPanel>
+    </Panel>
+  </StackPanel>
+</Window>

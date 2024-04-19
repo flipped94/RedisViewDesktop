@@ -6,6 +6,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using DynamicData;
 using ReactiveUI;
+using RedisViewDesktop.Enums;
 using RedisViewDesktop.Helpers;
 using RedisViewDesktop.Models;
 using System;
@@ -14,6 +15,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Reactive;
 using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -142,6 +144,9 @@ namespace RedisViewDesktop.ViewModels
         }
         public ICommand SearchCommand { get; }
 
+        public ICommand NewKeyCommand { get; }
+        public Interaction<NewKeyViewModel, AddKey?> AddNewKeyInteraction;
+
         public KeysPageViewModel()
         {
             RxApp.MainThreadScheduler.Schedule(async () =>
@@ -196,6 +201,49 @@ namespace RedisViewDesktop.ViewModels
 
             Source.RowSelection.SingleSelect = true;
             Source.RowSelection.SelectionChanged += SelectionChanged;
+
+            AddNewKeyInteraction = new Interaction<NewKeyViewModel, AddKey?>();
+            NewKeyCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                NewKeyViewModel input = new NewKeyViewModel();
+                var newKey = await AddNewKeyInteraction.Handle(input);
+                await AddKey(newKey);
+            });
+        }
+
+        private async Task AddKey(AddKey? newKey)
+        {
+            if (newKey is not null)
+            {
+                switch (newKey.NewKey.KeyType)
+                {
+                    case "HASH":
+                        await RedisHelper.ExecuteAsync("HSET", [newKey.Key, "New Field", "New Value"]);
+                        break;
+                    case "LIST":
+                        await RedisHelper.ExecuteAsync("LPUSH", [newKey.Key, "New Element"]);
+                        break;
+                    case "SET":
+                        await RedisHelper.ExecuteAsync("SADD", [newKey.Key, "New Member"]);
+                        break;
+                    case "ZSET":
+                        await RedisHelper.ExecuteAsync("ZADD", [newKey.Key, 0, "New Member"]);
+                        break;
+                    case "STRING":
+                        await RedisHelper.ExecuteAsync("SET", [newKey.Key, ""]);
+                        break;
+                    case "JSON":
+                        await RedisHelper.ExecuteAsync("JSON.SET", [newKey.Key, ".", "{\"New key\":\"New value\"}"]);
+                        break;
+                    case "STREAM":
+                        await RedisHelper.ExecuteAsync("XADD", [newKey.Key, "*", "New key", "New value"]);
+                        break;
+                }
+                BuildListView([newKey.Key]);
+                Source.Items = BuildTreeView([newKey.Key]);
+                ScannedKeys += 1;
+                DbSize += 1;
+            }
         }
 
         private void SelectionChanged(object? sender, TreeSelectionModelSelectionChangedEventArgs<KeyNode> e)
@@ -277,11 +325,20 @@ namespace RedisViewDesktop.ViewModels
             IsHasMore = response.ShowMore;
             Request.NodeCursor = response.NodeCursor;
             ScannedKeys += response.Keys.Count;
-            var listNodes = KeyHelper.BuildListNodes(response.Keys);
+            BuildListView(response.Keys);
+            List<KeyNode> tree = BuildTreeView(response.Keys);
+            Source.Items = tree;
+        }
+
+        private void BuildListView(List<string> keys)
+        {
+            var listNodes = KeyHelper.BuildListNodes(keys);
             ListNodes.AddRange(listNodes);
+        }
 
-
-            List<KeyNode> treeNodes = KeyHelper.BuildTreeNodes(response.Keys, Connection.Delimiter);
+        private List<KeyNode> BuildTreeView(List<string> keys)
+        {
+            List<KeyNode> treeNodes = KeyHelper.BuildTreeNodes(keys, Connection.Delimiter);
             foreach (var treeNode in treeNodes)
             {
                 TreeNodeDict.TryAdd(treeNode.Id, treeNode);
@@ -291,7 +348,8 @@ namespace RedisViewDesktop.ViewModels
             {
                 nodes.Add(item.Value);
             }
-            Source.Items = KeyHelper.BuildTree(nodes);
+            var tree = KeyHelper.BuildTree(nodes);
+            return tree;
         }
 
         public void Reset()
