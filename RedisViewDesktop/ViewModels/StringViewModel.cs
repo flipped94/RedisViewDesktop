@@ -31,7 +31,7 @@ namespace RedisViewDesktop.ViewModels
         public ICommand EditCommand { get; }
         public ICommand ConfirmCommand { get; }
         public ICommand CancelCommand { get; }
-        public ICommand DeleteCommand { get; }
+        //public ICommand DeleteCommand { get; }
 
         public StringViewModel()
         {
@@ -48,11 +48,11 @@ namespace RedisViewDesktop.ViewModels
             {
                 IsEditing = false;
             });
-            DeleteCommand = ReactiveCommand.Create(async () =>
-            {
-                await RedisHelper.DeleteKey(Key);
-                KeysPage!.CurrentPage = new SelectAKeyViewModel();
-            });
+            //DeleteCommand = ReactiveCommand.Create(async () =>
+            //{
+            //    await RedisHelper.DeleteKey(Key);
+            //    KeysPage!.CurrentPage = new SelectAKeyViewModel();
+            //});
         }
 
         public async void Ready()

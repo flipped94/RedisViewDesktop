@@ -4,9 +4,9 @@ using Avalonia.Controls.Selection;
 using Avalonia.Data.Converters;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using AvaloniaEdit.Utils;
 using DynamicData;
 using ReactiveUI;
-using RedisViewDesktop.Enums;
 using RedisViewDesktop.Helpers;
 using RedisViewDesktop.Models;
 using System;
@@ -149,6 +149,24 @@ namespace RedisViewDesktop.ViewModels
 
         public KeysPageViewModel()
         {
+            Source = new HierarchicalTreeDataGridSource<KeyNode>(KeysTree)
+            {
+                Columns =
+                {
+                   new HierarchicalExpanderColumn<KeyNode>(
+                       new TemplateColumn<KeyNode>("Name",
+                       "KeyCell",
+                       null,
+                       new GridLength(1, GridUnitType.Star)),
+                       x=>x.Children,
+                       x=>null!=x.Children&& x.Children.Count>0,
+                       x=>x.IsOpen
+                       )
+                }
+            };
+            Source.RowSelection.SingleSelect = true;
+            Source.RowSelection.SelectionChanged += SelectionChanged;
+
             RxApp.MainThreadScheduler.Schedule(async () =>
             {
                 await Ready();
@@ -199,9 +217,6 @@ namespace RedisViewDesktop.ViewModels
                 await PrepareData(true);
             });
 
-            Source.RowSelection.SingleSelect = true;
-            Source.RowSelection.SelectionChanged += SelectionChanged;
-
             AddNewKeyInteraction = new Interaction<NewKeyViewModel, AddKey?>();
             NewKeyCommand = ReactiveCommand.CreateFromTask(async () =>
             {
@@ -239,10 +254,11 @@ namespace RedisViewDesktop.ViewModels
                         await RedisHelper.ExecuteAsync("XADD", [newKey.Key, "*", "New key", "New value"]);
                         break;
                 }
-                BuildListView([newKey.Key]);
-                Source.Items = BuildTreeView([newKey.Key]);
                 ScannedKeys += 1;
                 DbSize += 1;
+                Keys.Add(newKey.Key);
+                BuildListView();
+                BuildTreeView();
             }
         }
 
@@ -256,10 +272,12 @@ namespace RedisViewDesktop.ViewModels
                     if (selectionNode.IsOpen)
                     {
                         Source.Collapse(Source.RowSelection.SelectedIndex);
+                        ExpandDict.Remove(selectionNode.Id);
                     }
                     else
                     {
                         Source.Expand(Source.RowSelection.SelectedIndex);
+                        ExpandDict.TryAdd(selectionNode.Id, true);
                     }
                     // NOTE
                     Source.RowSelection.Deselect(Source.RowSelection.SelectedIndex);
@@ -303,21 +321,11 @@ namespace RedisViewDesktop.ViewModels
                 this.RaiseAndSetIfChanged(ref scannedKeys, value);
             }
         }
-        public List<KeyNode> ScannedNodes { get; } = [];
+        public List<string> Keys { get; } = [];
         public ObservableCollection<KeyNode> ListNodes { get; } = [];
-        public Dictionary<string, KeyNode> TreeNodeDict = [];
         public ObservableCollection<KeyNode> KeysTree { get; } = [];
-        public HierarchicalTreeDataGridSource<KeyNode> Source { get; } = new HierarchicalTreeDataGridSource<KeyNode>([])
-        {
-            Columns =
-            {
-                 new HierarchicalExpanderColumn<KeyNode>(new TemplateColumn<KeyNode>
-                     ("Name","KeyCell",null,new GridLength(1, GridUnitType.Star))
-                     ,x=>x.Children,
-                     x=>null!=x.Children&& x.Children.Count>0,
-                     x=>x.IsOpen)
-            }
-        };
+        public Dictionary<string, bool> ExpandDict { get; } = [];
+        public HierarchicalTreeDataGridSource<KeyNode> Source { get; }
         private async Task PrepareData(bool isInit)
         {
             DbSize = await RedisHelper.DbSize();
@@ -325,40 +333,60 @@ namespace RedisViewDesktop.ViewModels
             IsHasMore = response.ShowMore;
             Request.NodeCursor = response.NodeCursor;
             ScannedKeys += response.Keys.Count;
-            BuildListView(response.Keys);
-            List<KeyNode> tree = BuildTreeView(response.Keys);
-            Source.Items = tree;
+            Keys.AddRange(response.Keys);
+            BuildListView();
+            BuildTreeView();
         }
 
-        private void BuildListView(List<string> keys)
+        private void BuildListView()
         {
-            var listNodes = KeyHelper.BuildListNodes(keys);
+            ListNodes.Clear();
+            var listNodes = KeyHelper.BuildListNodes(Keys);
             ListNodes.AddRange(listNodes);
         }
 
-        private List<KeyNode> BuildTreeView(List<string> keys)
+        private void BuildTreeView()
         {
-            List<KeyNode> treeNodes = KeyHelper.BuildTreeNodes(keys, Connection.Delimiter);
-            foreach (var treeNode in treeNodes)
+            KeysTree.Clear();
+            List<KeyNode> treeNodes = KeyHelper.BuildTreeNodes(Keys, Connection.Delimiter);
+            treeNodes.ForEach(x =>
             {
-                TreeNodeDict.TryAdd(treeNode.Id, treeNode);
-            }
-            var nodes = new List<KeyNode>();
-            foreach (var item in TreeNodeDict)
-            {
-                nodes.Add(item.Value);
-            }
-            var tree = KeyHelper.BuildTree(nodes);
-            return tree;
+                if (!x.IsKey)
+                {
+                    if (ExpandDict.TryGetValue(x.Id, out var expand))
+                    {
+                        x.IsOpen = expand;
+                    }
+                }
+            });
+            KeysTree.AddRange(KeyHelper.BuildTree(treeNodes));
         }
 
         public void Reset()
         {
             ScannedKeys = 0;
-            KeysTree.Clear();
-            TreeNodeDict.Clear();
-            ListNodes.Clear();
+            Keys.Clear();
             Request = new ScanKeyQequestBuilder().Build();
+        }
+
+        public async Task DeleteKey()
+        {
+            if (SelectedNode is not null)
+            {
+                var res = await RedisHelper.DeleteKey(SelectedNode.Name);
+                if (res)
+                {
+                    ScannedKeys -= 1;
+                    DbSize -= 1;
+                    if (SelectedNode is not null && SelectedNode.IsKey)
+                    {
+                        Keys.Remove(SelectedNode.Name);
+                        BuildListView();
+                        BuildTreeView();
+                        CurrentPage = new SelectAKeyViewModel();
+                    }
+                }
+            }
         }
 
         private static IconConverter? s_iconConverter;

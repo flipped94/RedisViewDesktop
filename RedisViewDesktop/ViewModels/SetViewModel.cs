@@ -40,7 +40,7 @@ namespace RedisViewDesktop.ViewModels
         public ObservableCollection<string> Content { get; } = [];
         public ObservableCollection<string> OriginContent { get; } = [];
 
-        public ICommand DeleteCommand { get; }
+        //public ICommand DeleteCommand { get; }
         public ICommand AddMembersCommand { get; }
         public ICommand EditMemberCommand { get; }
         public ICommand DeleteMemberCommand { get; }
@@ -51,14 +51,14 @@ namespace RedisViewDesktop.ViewModels
         public SetViewModel()
         {
 
-            DeleteCommand = ReactiveCommand.Create(async () =>
-            {
-                var res = await RedisHelper.DeleteKey(Key);
-                if (res)
-                {
-                    KeysPage!.CurrentPage = new SelectAKeyViewModel();
-                }
-            });
+            //DeleteCommand = ReactiveCommand.Create(async () =>
+            //{
+            //    var res = await RedisHelper.DeleteKey(Key);
+            //    if (res)
+            //    {
+            //        KeysPage!.CurrentPage = new SelectAKeyViewModel();
+            //    }
+            //});
 
             ShowAddSetMemberDialog = new Interaction<Unit, HashSet<string>>();
             AddMembersCommand = ReactiveCommand.Create(async () =>

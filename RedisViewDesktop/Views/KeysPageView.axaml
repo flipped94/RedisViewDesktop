@@ -261,13 +261,13 @@
                     <StackPanel>
                       <StackPanel HorizontalAlignment="Center"
                                   Margin="20"
-                                  IsVisible="{Binding !ListNodes.Count}">
+                                  IsVisible="{Binding !ScannedKeys>0}">
                         <TextBlock Text="No Keys to Display"/>
                       </StackPanel>
                       <!--Keys Tree-->
                       <TreeDataGrid Source="{Binding Source}"
                                     ShowColumnHeaders="False"
-                                    IsVisible="{Binding !IsList and ListNodes.Count>0}">
+                                    IsVisible="{Binding !IsList and ScannedKeys>0}">
                         <TreeDataGrid.Resources>
                           <DataTemplate x:Key="KeyCell" x:DataType="md:KeyNode">
                             <DockPanel>

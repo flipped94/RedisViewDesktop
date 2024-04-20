@@ -9,14 +9,14 @@ namespace RedisViewDesktop.ViewModels
     {
         public string? Text { get; set; }
 
-        public ICommand DeleteCommand { get; }
+        //public ICommand DeleteCommand { get; }
 
         public JsonViewModel()
         {
-            DeleteCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                await RedisHelper.DeleteKey(Key);
-            });
+            //DeleteCommand = ReactiveCommand.CreateFromTask(async () =>
+            //{
+            //    await RedisHelper.DeleteKey(Key);
+            //});
         }
 
         public async void Ready(AvaloniaEdit.TextEditor editor)

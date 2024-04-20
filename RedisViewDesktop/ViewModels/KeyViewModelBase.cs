@@ -1,4 +1,7 @@
 ﻿using ReactiveUI;
+using RedisViewDesktop.Helpers;
+using System.Reactive;
+using System.Windows.Input;
 
 namespace RedisViewDesktop.ViewModels
 {
@@ -33,8 +36,19 @@ namespace RedisViewDesktop.ViewModels
             {
                 this.RaiseAndSetIfChanged(ref ttl, value);
             }
-        }        
+        }
 
-        public KeyViewModelBase() { }
+        public ICommand DeleteCommand { get; }
+
+        public KeyViewModelBase() 
+        {
+            DeleteCommand = ReactiveCommand.Create( async () =>
+            {
+                if(KeysPage is not null)
+                {
+                    await KeysPage.DeleteKey();
+                }
+            });
+        }
     }
 }
