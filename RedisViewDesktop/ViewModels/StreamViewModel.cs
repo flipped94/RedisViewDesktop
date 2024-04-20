@@ -27,8 +27,6 @@ namespace RedisViewDesktop.ViewModels
         private readonly IEnumerable<StreamEntry> EMPTY = [];
         public ObservableCollection<StreamEntry> Content { get; } = [];
 
-        //public ICommand DeleteCommand { get; }
-
         public ICommand ViewEnrtyCommand { get; }
         public ICommand AddEntriesCommand { get; }
         public ICommand DeleteEntryCommand { get; }
@@ -39,16 +37,6 @@ namespace RedisViewDesktop.ViewModels
 
         public StreamViewModel()
         {
-
-            //DeleteCommand = ReactiveCommand.Create(async () =>
-            //{
-            //    var res = await RedisHelper.DeleteKey(Key);
-            //    if (res)
-            //    {
-            //        KeysPage!.CurrentPage = new SelectAKeyViewModel();
-            //    }
-            //});
-
 
             ShowViewStreamEntrieDialog = new Interaction<StreamEntry, Unit>();
             ViewEnrtyCommand = ReactiveCommand.Create(async () =>

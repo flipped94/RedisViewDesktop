@@ -39,7 +39,6 @@ namespace RedisViewDesktop.ViewModels
         public ObservableCollection<HashFieldViewModel> OriginContent { get; } = [];
 
         //public ICommand SearchMembersCommand { get; }
-        //public ICommand DeleteCommand { get; }
         public ICommand AddFieldsCommand { get; }
         public ICommand EditFieldCommand { get; }
         public ICommand DeleteFieldCommand { get; }
@@ -53,16 +52,7 @@ namespace RedisViewDesktop.ViewModels
             //{
             //    SearchMembers();
             //});
-
-            //DeleteCommand = ReactiveCommand.Create(async () =>
-            //{
-            //    var res = await RedisHelper.DeleteKey(Key);
-            //    if (res)
-            //    {
-            //        KeysPage!.CurrentPage = new SelectAKeyViewModel();
-            //    }
-            //});
-
+           
             ShowAddFieldsDialog = new Interaction<HashFieldAddViewModel, Dictionary<string, string>>();
             AddFieldsCommand = ReactiveCommand.Create(async () =>
             {

@@ -41,7 +41,6 @@ namespace RedisViewDesktop.ViewModels
         public ObservableCollection<ListNode> Content { get; } = [];
         public ObservableCollection<ListNode> OriginContent { get; } = [];
 
-        //public ICommand DeleteCommand { get; }
         public ICommand AddElementsCommand { get; }
         public ICommand EditElementsCommand { get; }
         public ICommand DeleteElementCommand { get; }
@@ -53,16 +52,6 @@ namespace RedisViewDesktop.ViewModels
 
         public ListViewModel()
         {
-
-            //DeleteCommand = ReactiveCommand.Create(async () =>
-            //{
-            //    var res = await RedisHelper.DeleteKey(Key);
-            //    if (res)
-            //    {
-            //        KeysPage!.CurrentPage = new SelectAKeyViewModel();
-            //    }
-            //});
-
             ShowAddListElementsDialog = new Interaction<Unit, List<ListNode>>();
             AddElementsCommand = ReactiveCommand.Create(async () =>
             {
