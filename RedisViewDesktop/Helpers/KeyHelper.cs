@@ -166,6 +166,10 @@ namespace RedisViewDesktop.Helpers
                 };
                 res.Add(node);
             }
+            res.Sort((n1, n2) =>
+            {
+                return n1.Name.CompareTo(n2.Name);
+            });
             return res;
         }
 
