@@ -25,6 +25,8 @@
     <None Remove="Assets\folder-open.png" />
     <None Remove="Assets\folder.png" />
     <None Remove="Assets\more.png" />
+    <None Remove="Assets\toggle-off.png" />
+    <None Remove="Assets\toggle-open.png" />
   </ItemGroup>
 
 

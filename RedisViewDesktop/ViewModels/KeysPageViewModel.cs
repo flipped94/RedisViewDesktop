@@ -17,6 +17,7 @@ using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows.Input;
 
 namespace RedisViewDesktop.ViewModels
@@ -24,7 +25,7 @@ namespace RedisViewDesktop.ViewModels
 
     public class KeysPageViewModel : ViewModelBase
     {
-        public bool isList = true;
+        private bool isList = true;
         public bool IsList
         {
             get => isList;
@@ -34,7 +35,7 @@ namespace RedisViewDesktop.ViewModels
             }
         }
 
-        public long dbSize = -1;
+        private long dbSize = -1;
         public long DbSize
         {
             get => dbSize;
@@ -48,7 +49,7 @@ namespace RedisViewDesktop.ViewModels
 
         public string Alias => Connection!.Alias;
 
-        public int db;
+        private int db;
         public int Db
         {
             get => Connection!.Db;
@@ -65,9 +66,50 @@ namespace RedisViewDesktop.ViewModels
             }
         }
 
-        public bool IsShowDb => !"Cluster".Equals(Connection.ServerType);
+        private bool IsShowDb => !"Cluster".Equals(Connection.ServerType);
 
         public bool IsConnected => Connection != null;
+
+        private bool isAutoRefresh = false;
+        public bool IsAutoRefresh
+        {
+            get => isAutoRefresh;
+            set
+            {                
+                this.RaiseAndSetIfChanged(ref isAutoRefresh, value);
+            }
+        }
+
+        private int refreshRate = 60;
+        public int RefreshRate
+        {
+            get => refreshRate;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref refreshRate, value);
+            }
+        }
+
+        private bool isEditAutoRefresh = false;
+        public bool IsEditAutoRefresh
+        {
+            get => isEditAutoRefresh;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref isEditAutoRefresh, value);
+            }
+        }
+
+        private DateTime lastRefreshTime;
+        private string lastRefreshStr;
+        public string LastRefreshStr
+        {
+            get => lastRefreshStr;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref lastRefreshStr, value);
+            }
+        }
 
         private KeyNode? selectedNode;
         public KeyNode? SelectedNode
@@ -147,6 +189,8 @@ namespace RedisViewDesktop.ViewModels
         public ICommand NewKeyCommand { get; }
         public Interaction<NewKeyViewModel, AddKey?> AddNewKeyInteraction;
 
+        private Timer timer;
+
         public KeysPageViewModel()
         {
             Source = new HierarchicalTreeDataGridSource<KeyNode>(KeysTree)
@@ -166,12 +210,19 @@ namespace RedisViewDesktop.ViewModels
             };
             Source.RowSelection.SingleSelect = true;
             Source.RowSelection.SelectionChanged += SelectionChanged;
+            Source.RowCollapsed += Source_RowCollapsed;
+            Source.RowExpanded += Source_RowExpanded;
 
             RxApp.MainThreadScheduler.Schedule(async () =>
             {
+                lastRefreshTime = DateTime.Now;
+                LastRefreshStr = "last refresh: now";
+                timer = new Timer(30*1000);
+                timer.Elapsed += RefreshElapsed;
+                timer.Start();
                 await Ready();
             });
-
+            
             SwitchViewCommand = ReactiveCommand.Create<string>(view =>
             {
                 IsList = "List".Equals(view);
@@ -205,6 +256,8 @@ namespace RedisViewDesktop.ViewModels
 
             ResetCommand = ReactiveCommand.Create(async () =>
             {
+                lastRefreshTime = DateTime.Now;
+                LastRefreshStr = "last refresh: now";
                 Reset();
                 Request = new ScanKeyQequestBuilder().Build();
                 await PrepareData(true);
@@ -224,6 +277,12 @@ namespace RedisViewDesktop.ViewModels
                 var newKey = await AddNewKeyInteraction.Handle(input);
                 await AddKey(newKey);
             });
+        }       
+
+        private void RefreshElapsed(object? sender, ElapsedEventArgs e)
+        {
+            var passed = DateTime.Now - lastRefreshTime;
+            LastRefreshStr = $"last refresh: {TimeSpanDescHelper.Dscription(passed)}";
         }
 
         private async Task AddKey(AddKey? newKey)
@@ -287,6 +346,16 @@ namespace RedisViewDesktop.ViewModels
                     SelectedNode = selectionNode;
                 }
             }
+        }
+
+        private void Source_RowCollapsed(object? sender, RowEventArgs<HierarchicalRow<KeyNode>> e)
+        {
+            ExpandDict.Remove(e.Row.Model.Id);
+        }
+
+        private void Source_RowExpanded(object? sender, RowEventArgs<HierarchicalRow<KeyNode>> e)
+        {
+            ExpandDict.TryAdd(e.Row.Model.Id, true);
         }
 
         public void DoShowValue(string key, string keyType)
@@ -388,6 +457,14 @@ namespace RedisViewDesktop.ViewModels
                 }
             }
         }
+
+        public async Task RefreshInterval()
+        {
+            lastRefreshTime = DateTime.Now;
+            LastRefreshStr = "last refresh: now";
+            Reset();
+            await PrepareData(true);
+        }       
 
         private static IconConverter? s_iconConverter;
 
