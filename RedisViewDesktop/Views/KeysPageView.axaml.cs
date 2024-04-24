@@ -1,10 +1,11 @@
 using Avalonia.Controls.Primitives;
 using Avalonia.ReactiveUI;
+using AvaloniaEdit.Utils;
 using ReactiveUI;
 using RedisViewDesktop.Helpers;
 using RedisViewDesktop.Models;
 using RedisViewDesktop.ViewModels;
-using System;
+using System.Collections.ObjectModel;
 using System.Reactive.Concurrency;
 using System.Threading.Tasks;
 using System.Timers;
@@ -18,7 +19,17 @@ public partial class KeysPageView : ReactiveUserControl<KeysPageViewModel>
     public KeysPageView()
     {
         InitializeComponent();
-        this.WhenActivated(action => action(ViewModel!.AddNewKeyInteraction.RegisterHandler(DoShowAddNewKeyDialog)));
+        this.WhenActivated(action =>
+        {
+            action(ViewModel!.AddNewKeyInteraction.RegisterHandler(DoShowAddNewKeyDialog));
+            var types = new ObservableCollection<NewKey>
+            {
+                new("#1f88d9", "All Types")
+            };
+            types.AddRange(NewKey.GetNewKeys());
+            KeyComBox.ItemsSource = types;
+            KeyComBox.SelectedIndex = 0;
+        });
     }
 
     private async Task DoShowAddNewKeyDialog(InteractionContext<NewKeyViewModel, AddKey?> interaction)
@@ -32,7 +43,7 @@ public partial class KeysPageView : ReactiveUserControl<KeysPageViewModel>
     private void ScannedKeys_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
         KeysScrollViewer.ScrollToEnd();
-    }   
+    }
 
     private void EditRefreshRate(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
@@ -114,7 +125,7 @@ public partial class KeysPageView : ReactiveUserControl<KeysPageViewModel>
     private void ToggleButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         ToggleButton? toggleButton = sender as ToggleButton;
-        if (toggleButton is not null&&ViewModel is not null)
+        if (toggleButton is not null && ViewModel is not null)
         {
             if (toggleButton.IsChecked is not null && (bool)toggleButton.IsChecked)
             {

@@ -138,7 +138,7 @@ namespace RedisViewDesktop.Helpers
             return keys.Sum();
         }
 
-        public static async Task<ScanKeyResponse> Scan(ScanKeyRequest request, bool isInit = true)
+        public static async Task<ScanKeyResponse> Scan(ScanKeyRequest request)
         {
             if (IsClusterMode)
             {
@@ -148,14 +148,6 @@ namespace RedisViewDesktop.Helpers
                     Dictionary<EndPoint, RedisResult> resDict = [];
                     foreach (var replica in nodes)
                     {
-                        if (!isInit)
-                        {
-                            request.NodeCursor.TryGetValue(replica.EndPoint, out long cursor);
-                            if (0 == cursor)
-                            {
-                                continue;
-                            }
-                        }
                         object[] args = request.Args(replica.EndPoint, nodes.Length);
                         var res = await replica.ExecuteAsync("SCAN", args);
                         resDict.TryAdd(replica.EndPoint, res);
@@ -193,15 +185,8 @@ namespace RedisViewDesktop.Helpers
             }
             else
             {
-                if (!isInit)
-                {
-                    request.NodeCursor.TryGetValue(database.IdentifyEndpoint(), out long cursor);
-                    if (cursor == 0)
-                    {
-                        return new ScanKeyResponse();
-                    }
-                }
-                RedisResult result = await database!.ExecuteAsync("SCAN", request.Args(database.IdentifyEndpoint()!));
+                var args = request.Args(database.IdentifyEndpoint())!;
+                RedisResult result = await database!.ExecuteAsync("SCAN", args);
 
                 if (!result.IsNull)
                 {

@@ -1,5 +1,4 @@
-﻿using RedisViewDesktop.Enums;
-using RedisViewDesktop.Helpers;
+﻿using RedisViewDesktop.Helpers;
 using System.Collections.Generic;
 using System.Net;
 
@@ -8,14 +7,14 @@ namespace RedisViewDesktop.Models
     public class ScanKeyRequest(ScanKeyQequestBuilder builder)
     {
         public Dictionary<EndPoint, long> NodeCursor { get; set; } = builder.NodeCursor;
-        public string Pattern { get; set; } = builder.Pattern;
+        public string? Pattern { get; set; } = builder.Pattern;
 
         public int Count = builder.Count;
-        public KeyTypeEnum KeyType { get; set; } = builder.KeyType;
+        public string? KeyType { get; set; } = builder.KeyType;
 
-        public object[] Args(EndPoint endPoint,long nodeCount)
+        public object[] Args(EndPoint endPoint, long nodeCount)
         {
-            List<object> args = [];          
+            List<object> args = [];
             if (NodeCursor.TryGetValue(endPoint, out long cursor))
             {
                 args.Add(cursor);
@@ -32,14 +31,14 @@ namespace RedisViewDesktop.Models
             if (Count > 0)
             {
                 args.Add("COUNT");
-                args.Add(Count/nodeCount>0?Count/nodeCount:Count/nodeCount+1);
+                args.Add(Count / nodeCount > 0 ? Count / nodeCount : Count / nodeCount + 1);
             }
             else
             {
                 args.Add("COUNT");
-                args.Add(500/nodeCount);
+                args.Add(500 / nodeCount);
             }
-            var keyType = KeyTypeHelper.GetTypeString(KeyType);
+            var keyType = KeyTypeHelper.AppTypeToRedisTypeString(KeyType);
             if (keyType != null)
             {
                 args.Add("TYPE");
@@ -74,7 +73,7 @@ namespace RedisViewDesktop.Models
                 args.Add("COUNT");
                 args.Add(300);
             }
-            var keyType = KeyTypeHelper.GetTypeString(KeyType);
+            var keyType = KeyTypeHelper.AppTypeToRedisTypeString(KeyType);
             if (keyType != null)
             {
                 args.Add("TYPE");
@@ -87,11 +86,11 @@ namespace RedisViewDesktop.Models
     public class ScanKeyQequestBuilder
     {
         public Dictionary<EndPoint, long> NodeCursor { get; set; } = [];
-        public string Pattern { get; set; }
+        public string? Pattern { get; set; }
         public int Count { get; set; }
-        public KeyTypeEnum KeyType { get; set; }
+        public string? KeyType { get; set; }
 
-        public ScanKeyQequestBuilder SetPattern(string pattern)
+        public ScanKeyQequestBuilder SetPattern(string? pattern)
         {
             Pattern = pattern;
             return this;
@@ -103,7 +102,7 @@ namespace RedisViewDesktop.Models
             return this;
         }
 
-        public ScanKeyQequestBuilder SetKeyType(KeyTypeEnum keyType)
+        public ScanKeyQequestBuilder SetKeyType(string? keyType)
         {
             KeyType = keyType;
             return this;

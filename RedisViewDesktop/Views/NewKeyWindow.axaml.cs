@@ -1,5 +1,3 @@
-
-using Avalonia.Controls;
 using Avalonia.ReactiveUI;
 using AvaloniaEdit.Utils;
 using ReactiveUI;

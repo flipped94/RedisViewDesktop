@@ -25,8 +25,13 @@ namespace RedisViewDesktop.Helpers
             { "UNKNOWN", "#861b2d"},
         };
 
+
         public static string GetColor(string keyType)
         {
+            if (keyType is null)
+            {
+                return "#861b2d";
+            }
             if (COLORS.TryGetValue(keyType, out var color))
             {
                 return color;
@@ -37,26 +42,59 @@ namespace RedisViewDesktop.Helpers
             }
         }
 
-        public readonly static Dictionary<KeyTypeEnum, string> KEYTYPE = new()
+        public readonly static Dictionary<string, string> RedisTypeToAppTypeDict = new()
         {
-            { KeyTypeEnum.HASH,"HASH" },
-            { KeyTypeEnum.STRING,"STRING" },
-            { KeyTypeEnum.LIST, "LIST" },
-            { KeyTypeEnum.SET, "SET" },
-            { KeyTypeEnum.ZSET, "ZSET" },
-            { KeyTypeEnum.STREAM, "STREAM"},
-            { KeyTypeEnum.TOPK, "TOPK-TYPE"},
-            { KeyTypeEnum.CMSK, "CMSK-TYPE"},
-            { KeyTypeEnum.MBBLOOM, "MBBLOOM--"},
-            { KeyTypeEnum.MBBLOOMCF, "MBBLOOMCF"},
-            { KeyTypeEnum.TDIS, "TDIS-TYPE"},
-            { KeyTypeEnum.TSDB, "TSDB-TYPE"},
-            { KeyTypeEnum.JSON, "REJSON-RL"},
+            { "HASH", KeyTypeEnum.HASH.ToString() },
+            { "STRING",KeyTypeEnum.STRING.ToString() },
+            { "LIST" , KeyTypeEnum.LIST.ToString() },
+            { "SET" , KeyTypeEnum.SET.ToString() },
+            { "ZSET" , KeyTypeEnum.ZSET.ToString() },
+            { "STREAM" , KeyTypeEnum.STREAM.ToString()},
+            { "TOPK-TYPE" , KeyTypeEnum.TOPK.ToString()},
+            { "CMSK-TYPE" , KeyTypeEnum.CMSK.ToString()},
+            { "MBBLOOM--" , KeyTypeEnum.MBBLOOM.ToString()},
+            { "MBBLOOMCF" , KeyTypeEnum.MBBLOOMCF.ToString()},
+            { "TDIS-TYPE" , KeyTypeEnum.TDIS.ToString()},
+            { "TSDB-TYPE" , KeyTypeEnum.TSDB.ToString()},
+            { "REJSON-RL" , KeyTypeEnum.JSON.ToString()},
         };
 
-        public static string? GetTypeString(KeyTypeEnum keyTypeEnum)
+        public static string RedisTypeToAppTypeString(string keyType)
         {
-            if (KEYTYPE.TryGetValue(keyTypeEnum, out var type))
+            if (RedisTypeToAppTypeDict.TryGetValue(keyType, out var type))
+            {
+                return type;
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        public readonly static Dictionary<string, string> AppTypeToRedisTypeDict = new()
+        {
+            { KeyTypeEnum.HASH.ToString(),"HASH" },
+            { KeyTypeEnum.STRING.ToString(),"STRING" },
+            { KeyTypeEnum.LIST.ToString(), "LIST" },
+            { KeyTypeEnum.SET.ToString(), "SET" },
+            { KeyTypeEnum.ZSET.ToString(), "ZSET" },
+            { KeyTypeEnum.STREAM.ToString(), "STREAM"},
+            { KeyTypeEnum.TOPK.ToString(), "TOPK-TYPE"},
+            { KeyTypeEnum.CMSK.ToString(), "CMSK-TYPE"},
+            { KeyTypeEnum.MBBLOOM.ToString(), "MBBLOOM--"},
+            { KeyTypeEnum.MBBLOOMCF.ToString(), "MBBLOOMCF"},
+            { KeyTypeEnum.TDIS.ToString(), "TDIS-TYPE"},
+            { KeyTypeEnum.TSDB.ToString(), "TSDB-TYPE"},
+            { KeyTypeEnum.JSON.ToString(), "REJSON-RL"},
+        };
+
+        public static string? AppTypeToRedisTypeString(string keyType)
+        {
+            if (keyType is null)
+            {
+                return null;
+            }
+            if (AppTypeToRedisTypeDict.TryGetValue(keyType, out var type))
             {
                 return type;
             }

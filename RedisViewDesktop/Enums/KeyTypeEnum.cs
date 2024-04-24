@@ -16,7 +16,6 @@
         MBBLOOMCF,
         TDIS,
         TSDB,
-        REJSON,
         UNKNOWN,
     }
 }

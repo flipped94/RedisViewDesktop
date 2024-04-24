@@ -11,6 +11,11 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="RedisViewDesktop.Views.JsonView">
 
+  <UserControl.Styles>
+    <Style Selector="Button#DeleteBtn:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="Transparent"/>
+    </Style>
+  </UserControl.Styles>
 
   <DockPanel LastChildFill="True">
     <!--key info-->
@@ -29,7 +34,7 @@
       <Border Height="1" Background="#f3f3f3" Margin="0 4"/>
       <DockPanel LastChildFill="True">
         <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-          <Button Margin="20 0 10 0" Background="Transparent" Command="{Binding DeleteCommand}">
+          <Button Margin="20 0 10 0" Name="DeleteBtn" Background="Transparent" Command="{Binding DeleteCommand}">
             <i:Icon Value="mdi-delete" FontSize="20"/>
           </Button>
         </StackPanel>

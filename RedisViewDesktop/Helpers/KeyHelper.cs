@@ -1,166 +1,151 @@
-﻿using DynamicData;
+﻿using RedisViewDesktop.Enums;
 using RedisViewDesktop.Models;
 using Serilog;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace RedisViewDesktop.Helpers
 {
     public class KeyHelper
-    {     
-        public static List<KeyNode> ToTree(List<string>? keys, string delimiter)
-        {
+    {
+        private static readonly ConcurrentDictionary<string, KeyNode> KeyValuePairs = [];
 
-            if (keys == null || keys.Count == 0)
+        public static void DeleteTreeNode(string id)
+        {            
+            while (KeyValuePairs.TryRemove(id, out KeyNode? node))
             {
-                return [];
+                if (node is not null && node.ParentId is not null)
+                {
+                    if (KeyValuePairs.TryGetValue(node.ParentId, out KeyNode? keyNode))
+                    {
+                        if (keyNode is null || keyNode.KeyCount > 0)
+                        {
+                            break;
+                        }
+                    }
+                    id = node.ParentId;
+                }
             }
-            List<KeyNode> keyNodes = BuildTreeNodes(keys, delimiter);
-
-            return BuildTree(keyNodes);
         }
 
-        public static List<KeyNode> BuildTree(List<KeyNode> nodes)
+        public static void Clear()
         {
-            var start = DateTime.Now;
-            List<KeyNode> roots = nodes.FindAll(node => null == node.ParentId);
-            roots.Sort((o1, o2) =>
+            KeyValuePairs.Clear();
+        }
+
+        public static List<string> AllKeys()
+        {
+            return KeyValuePairs.Values.Where(x => x.IsKey).Select(x => x.Name).ToList();
+        }
+
+        public static List<KeyNode> LoadChildren(string parentId)
+        {
+            var children = KeyValuePairs.Values.Where(x => x.ParentId == parentId).ToList();
+            children.Sort((o1, o2) =>
             {
-                if (o1.Id.EndsWith('F') && o2.Id.EndsWith('F'))
-                {
-                    return o1.Id.CompareTo(o2.Id);
-                }
-                else if (o1.Id.EndsWith('F') && !o2.Id.EndsWith('F'))
-                {
-                    return -1;
-                }
-                else if (!o1.Id.EndsWith('F') && o2.Id.EndsWith('F'))
+                if (o1.IsKey && !o2.IsKey)
                 {
                     return 1;
                 }
-                else
+                if (!o1.IsKey && o2.IsKey)
                 {
-                    return o1.Id.CompareTo(o2.Id);
+                    return -1;
                 }
+                return o1.Name.CompareTo(o2.Name);
             });
+            return children;
+        }
 
-            Dictionary<string, KeyNode> allMap = nodes.ToDictionary(o => o.Id);
-            List<KeyNode> children = nodes.FindAll(o => o.ParentId != null);
-
-            IEnumerable<IGrouping<string?, KeyNode>> group = children.GroupBy(o => o.ParentId);
-
-            foreach (var item in group)
+        public static List<KeyNode> Roots(bool isFirstLoad)
+        {
+            List<KeyNode> roots;
+            if (isFirstLoad)
             {
-                KeyNode parent;
-                allMap.TryGetValue(item.Key!, out parent!);
-                List<KeyNode> sub = [.. item];
-
-                sub.Sort((o1, o2) =>
-                {
-                    if (o1.Id.EndsWith('F') && o2.Id.EndsWith('F'))
-                    {
-                        return o1.Id.CompareTo(o2.Id);
-                    }
-                    else if (o1.Id.EndsWith('F') && !o2.Id.EndsWith('F'))
-                    {
-                        return -1;
-                    }
-                    else if (!o1.Id.EndsWith('F') && o2.Id.EndsWith('F'))
-                    {
-                        return 1;
-                    }
-                    else
-                    {
-                        return o1.Id.CompareTo(o2.Id);
-                    }
-                });
-
-                parent.Children.AddRange(sub);
+                roots = KeyValuePairs.Values.Where(x => x.ParentId is null).Take(50).ToList();
             }
-            Log.Error($"Build Tree Spent:{(DateTime.Now - start).TotalSeconds}");
+            else
+            {
+                roots = KeyValuePairs.Values.Where(x => x.ParentId is null).ToList();
+            }
+
+            roots.Sort((o1, o2) =>
+            {
+                if (o1.IsKey && !o2.IsKey)
+                {
+                    return 1;
+                }
+                if (!o1.IsKey && o2.IsKey)
+                {
+                    return -1;
+                }
+                return o1.Name.CompareTo(o2.Name);
+            });
             return roots;
+
         }
 
-        public static List<KeyNode> BuildTreeNodes(List<string>? keys, string delimiter)
+        public static void ConstructTreeNode(List<string> addedKeys, string delimiter = ":")
         {
-            if (keys == null || keys.Count == 0)
-            {
-                return [];
-            }
-            Dictionary<string, KeyNode> keyValuePairs = [];
-            ConcurrentDictionary<string, string> keyTypeDic = RedisHelper.KeyType(keys);
             var start = DateTime.Now;
-            foreach (var key in keys)
+            ConcurrentDictionary<string, string> keyTypeDic = RedisHelper.KeyType(addedKeys);
+            foreach (string name in addedKeys)
             {
-                string[] keySplited = key.Split(delimiter);
-                int lastIndex = keySplited.Length - 1;
-
-                for (int i = 0; i < keySplited.Length; i++)
+                string[] nameSplitted = name.Split(delimiter);
+                int lastIndex = nameSplitted.Length - 1;
+                string? previous = null;
+                for (int i = 0; i < nameSplitted.Length; i++)
                 {
-                    KeyNode node = new();
-
-                    if (i == lastIndex)
+                    string? parentId = i == 0 ? null : previous;
+                    string id = parentId == null ? nameSplitted[i] + delimiter : previous + nameSplitted[i] + delimiter;
+                    KeyNode node = new()
                     {
-                        node.Name = key;
-                        node.Id = key + delimiter + "K";
-                        node.IsKey = true;
-                        node.Type = keyTypeDic.GetValueOrDefault(key, "UNKNOWN").ToUpper();
-                        node.Color = KeyTypeHelper.GetColor(node.Type);
-                    }
-                    else
+                        ParentId = parentId,
+                    };
+                    previous = i == 0 ? nameSplitted[i] + delimiter : parentId + nameSplitted[i] + delimiter;
+                    if (i != lastIndex)
                     {
-                        node.Name = keySplited[i];
-                        node.Id = Merge(keySplited, i - 1, delimiter) + node.Name + delimiter + 'F';
+                        // folder ndoe
+                        node.Id = id;
+                        node.Name = nameSplitted[i];
                         node.IsKey = false;
-                    }
-
-                    if (i == 0)
-                    {
-                        node.ParentId = null;
+                        if (KeyValuePairs.ContainsKey(id))
+                        {
+                            continue;
+                        }
                     }
                     else
-                    {
-                        node.ParentId = Merge(keySplited, i - 1, delimiter) + 'F';
+                    { 
+                        // data node
+                        node.Id = id + "k";         
+                        node.Name = name;
+                        node.IsKey = true;
+                        node.Type = KeyTypeHelper.RedisTypeToAppTypeString(keyTypeDic.GetValueOrDefault(name, "UNKNOWN").ToUpper());
+                        node.Color = KeyTypeHelper.GetColor(node.Type);
+
                     }
-                    keyValuePairs.TryAdd(node.Id, node);
+                    KeyValuePairs.TryAdd(node.Id, node);
                 }
             }
-
-            List<KeyNode> nodes = [.. keyValuePairs.Values];
-            nodes.ForEach(node =>
-            {
-                if (node.IsKey)
-                {
-                    node.KeyCount = 0;
-                }
-                else
-                {
-                    node.KeyCount = keys.ToList().FindAll(s => s.StartsWith(node.Id[..^1])).Count;
-                }
-            });
-            var duration = (DateTime.Now - start).TotalSeconds;
-            Log.Error($"Build Tree Node Spent:{duration}");
-            return nodes;
+            Log.Error($"Build Tree Node Spent:{(DateTime.Now - start).TotalSeconds}");
         }
 
-
-        public static List<KeyNode> BuildListNodes(List<string>? keys)
+        public static List<KeyNode> BuildListNodes(List<string>? addKeys)
         {
-            if (keys == null || keys.Count == 0)
+            if (addKeys == null || addKeys.Count == 0)
             {
                 return [];
             }
-            ConcurrentDictionary<string, string> keyTypeDic = RedisHelper.KeyType([.. keys]);
+            ConcurrentDictionary<string, string> keyTypeDic = RedisHelper.KeyType([.. addKeys]);
             List<KeyNode> res = [];
             foreach (var item in keyTypeDic)
             {
+                var type = KeyTypeHelper.RedisTypeToAppTypeString(item.Value);
                 KeyNode node = new()
                 {
                     Name = item.Key,
-                    Type = item.Value,
+                    Type = type is null ? KeyTypeEnum.UNKNOWN.ToString() : type,
                     IsKey = true,
                     Color = KeyTypeHelper.GetColor(item.Value)
                 };
@@ -173,14 +158,5 @@ namespace RedisViewDesktop.Helpers
             return res;
         }
 
-        private static string Merge(string[] splited, int index, string delimiter)
-        {
-            StringBuilder stringBuilder = new();
-            for (int i = 0; i <= index; i++)
-            {
-                stringBuilder.Append(splited[i]).Append(delimiter);
-            }
-            return stringBuilder.ToString();
-        }
     }
 }

@@ -161,7 +161,7 @@
                     <Label Padding="5 0 0 0" VerticalAlignment="Center" Content="{Binding LastRefreshStr}"/>
                     <Button Name="Reset"
                             Padding="0 2 0 0"
-                            Command="{Binding ResetCommand}"
+                            Command="{Binding RefreshCommand}"
                             Cursor="Hand"
                             VerticalContentAlignment="Center"
                             VerticalAlignment="Center"
@@ -265,89 +265,28 @@
                           <i:Icon Value="mdi-magnify" FontSize="16"/>
                         </Button>
                         <DockPanel LastChildFill="True">
-                          <ComboBox DockPanel.Dock="Left" SelectedIndex="0" BorderThickness="0">
-                            <ComboBoxItem>
-                              <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <TextBlock VerticalAlignment="Center"
-                                           Margin="2 0 0 0"
-                                           Text="All Types"
-                                           FontSize="12"
-                                           HorizontalAlignment="Center"/>
-                              </StackPanel>
-                            </ComboBoxItem>
-                            <ComboBoxItem>
-                              <StackPanel Orientation="Horizontal">
-                                <Ellipse Width="8" Height="8" Fill="#cdddf8"/>
-                                <TextBlock VerticalAlignment="Center"
-                                           Margin="2 0 0 0"
-                                           Text="HASH"
-                                           FontSize="12"
-                                           HorizontalAlignment="Center"/>
-                              </StackPanel>
-                            </ComboBoxItem>
-                            <ComboBoxItem>
-                              <StackPanel Orientation="Horizontal">
-                                <Ellipse Width="8" Height="8" Fill="#a5d4c3"/>
-                                <TextBlock VerticalAlignment="Center"
-                                           Margin="2 0 0 0"
-                                           Text="LIST"
-                                           FontSize="12"
-                                           HorizontalAlignment="Center"/>
-                              </StackPanel>
-                            </ComboBoxItem>
-                            <ComboBoxItem>
-                              <StackPanel Orientation="Horizontal">
-                                <Ellipse Width="8" Height="8" Fill="#d4baa7"/>
-                                <TextBlock VerticalAlignment="Center"
-                                           Margin="2 0 0 0"
-                                           Text="SET"
-                                           FontSize="12"
-                                           HorizontalAlignment="Center"/>
-                              </StackPanel>
-                            </ComboBoxItem>
-                            <ComboBoxItem>
-                              <StackPanel Orientation="Horizontal">
-                                <Ellipse Width="8" Height="8" Fill="#d9a0c6"/>
-                                <TextBlock VerticalAlignment="Center"
-                                           Margin="2 0 0 0"
-                                           Text="ZSET"
-                                           FontSize="12"
-                                           HorizontalAlignment="Center"/>
-                              </StackPanel>
-                            </ComboBoxItem>
-                            <ComboBoxItem>
-                              <StackPanel Orientation="Horizontal">
-                                <Ellipse Width="8" Height="8" Fill="#c7b0ea"/>
-                                <TextBlock VerticalAlignment="Center"
-                                           Margin="2 0 0 0"
-                                           Text="STRING"
-                                           FontSize="12"
-                                           HorizontalAlignment="Center"/>
-                              </StackPanel>
-                            </ComboBoxItem>
-                            <ComboBoxItem>
-                              <StackPanel Orientation="Horizontal">
-                                <Ellipse Width="8" Height="8" Fill="#b8c5db"/>
-                                <TextBlock VerticalAlignment="Center"
-                                           Margin="2 0 0 0"
-                                           Text="JSON"
-                                           FontSize="12"
-                                           HorizontalAlignment="Center"/>
-                              </StackPanel>
-                            </ComboBoxItem>
-                            <ComboBoxItem>
-                              <StackPanel Orientation="Horizontal">
-                                <Ellipse Width="8" Height="8" Fill="#c7cea8"/>
-                                <TextBlock VerticalAlignment="Center"
-                                           Margin="2 0 0 0"
-                                           Text="STREAM"
-                                           FontSize="12"
-                                           HorizontalAlignment="Center"/>
-                              </StackPanel>
-                            </ComboBoxItem>
-                          </ComboBox>
+                          <Border BorderThickness="1" BorderBrush="#ededed">
+                            <ComboBox Name="KeyComBox"
+                                      HorizontalAlignment="Stretch"
+                                      SelectedItem="{Binding SearchKeyType,Mode=TwoWay}"
+                                      DockPanel.Dock="Left"
+                                      BorderThickness="0">
+                              <ComboBox.ItemTemplate>
+                                <DataTemplate x:DataType="md:NewKey">
+                                  <StackPanel Orientation="Horizontal">
+                                    <Ellipse Width="8" Height="8" Fill="{Binding Fill}" />
+                                    <TextBlock VerticalAlignment="Center"
+                                               Margin="2 0 0 0"
+                                               Text="{Binding KeyType}"
+                                               FontSize="12"
+                                               HorizontalAlignment="Center"/>
+                                  </StackPanel>
+                                </DataTemplate>
+                              </ComboBox.ItemTemplate>
+                            </ComboBox>
+                          </Border>
                           <Border BorderBrush="#ededed" BorderThickness="1"/>
-                          <TextBox Text="{Binding Pattern}" Watermark="Key Name or Pattern" BorderThickness="0" />
+                          <TextBox Text="{Binding Pattern}" Watermark="Search Pattern" BorderThickness="0" />
                         </DockPanel>
                       </DockPanel>
                     </Border>
@@ -362,7 +301,7 @@
                       <!--Keys Tree-->
                       <TreeDataGrid Source="{Binding Source}"
                                     ShowColumnHeaders="False"
-                                    IsVisible="{Binding !IsList and ScannedKeys>0}">
+                                    IsVisible="{Binding !IsList and !(ScannedKeys>0)}">
                         <TreeDataGrid.Resources>
                           <DataTemplate x:Key="KeyCell" x:DataType="md:KeyNode">
                             <DockPanel>
@@ -406,7 +345,7 @@
                       <ListBox ItemsSource="{Binding ListNodes}"
                                Background="#ffffff"
                                SelectedItem="{Binding SelectedNode}"
-                               IsVisible="{Binding IsList and ListNodes.Count>0}">
+                               IsVisible="{Binding IsList and ScannedKeys>0}">
                         <ListBox.ItemTemplate>
                           <DataTemplate>
                             <Border>
