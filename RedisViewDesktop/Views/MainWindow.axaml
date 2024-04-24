@@ -10,7 +10,7 @@
         Icon="/Assets/16x16.png"
         Title="RedisView"
         WindowStartupLocation="CenterScreen"
-        Width="1500"
+        WindowState="Maximized"
         Background="Transparent">
 
   <Design.DataContext>
