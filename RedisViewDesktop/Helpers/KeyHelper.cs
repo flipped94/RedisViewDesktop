@@ -12,8 +12,21 @@ namespace RedisViewDesktop.Helpers
     {
         private static readonly ConcurrentDictionary<string, KeyNode> KeyValuePairs = [];
 
+        public static int NodeSort(KeyNode o1, KeyNode o2)
+        {
+            if (o1.IsKey && !o2.IsKey)
+            {
+                return 1;
+            }
+            if (!o1.IsKey && o2.IsKey)
+            {
+                return -1;
+            }
+            return o1.Name.CompareTo(o2.Name);
+        }
+
         public static void DeleteTreeNode(string id)
-        {            
+        {
             while (KeyValuePairs.TryRemove(id, out KeyNode? node))
             {
                 if (node is not null && node.ParentId is not null)
@@ -43,18 +56,7 @@ namespace RedisViewDesktop.Helpers
         public static List<KeyNode> LoadChildren(string parentId)
         {
             var children = KeyValuePairs.Values.Where(x => x.ParentId == parentId).ToList();
-            children.Sort((o1, o2) =>
-            {
-                if (o1.IsKey && !o2.IsKey)
-                {
-                    return 1;
-                }
-                if (!o1.IsKey && o2.IsKey)
-                {
-                    return -1;
-                }
-                return o1.Name.CompareTo(o2.Name);
-            });
+            children.Sort(NodeSort);
             return children;
         }
 
@@ -70,18 +72,7 @@ namespace RedisViewDesktop.Helpers
                 roots = KeyValuePairs.Values.Where(x => x.ParentId is null).ToList();
             }
 
-            roots.Sort((o1, o2) =>
-            {
-                if (o1.IsKey && !o2.IsKey)
-                {
-                    return 1;
-                }
-                if (!o1.IsKey && o2.IsKey)
-                {
-                    return -1;
-                }
-                return o1.Name.CompareTo(o2.Name);
-            });
+            roots.Sort(NodeSort);
             return roots;
 
         }
@@ -116,9 +107,9 @@ namespace RedisViewDesktop.Helpers
                         }
                     }
                     else
-                    { 
+                    {
                         // data node
-                        node.Id = id + "k";         
+                        node.Id = id + "k";
                         node.Name = name;
                         node.IsKey = true;
                         node.Type = KeyTypeHelper.RedisTypeToAppTypeString(keyTypeDic.GetValueOrDefault(name, "UNKNOWN").ToUpper());
