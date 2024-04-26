@@ -6,6 +6,61 @@
              xmlns:vm="using:RedisViewDesktop.ViewModels"
              x:DataType="vm:ServerPageViewModel"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="RedisViewDesktop.Views.ServerPageView">  
+             x:Class="RedisViewDesktop.Views.ServerPageView">
+
+  <Design.DataContext>
+    <vm:ServerPageViewModel/>
+  </Design.DataContext>
+
+  <UserControl.Styles>
+    <Style Selector="ListBox ListBoxItem">
+      <Setter Property="Padding" Value="8 5 "/>
+    </Style>
+    <Style Selector="TabItem">
+      <Setter Property="Padding" Value="0"/>
+    </Style>
+  </UserControl.Styles>
+
+  <DockPanel LastChildFill="True" Margin="5">
+    <DockPanel DockPanel.Dock="Top">
+      <TabStrip DockPanel.Dock="Right" SelectionChanged="TabStrip_SelectionChanged">
+        <TabItem Header="SERVER" FontSize="16"/>
+        <TabItem Header="CLIENTS" FontSize="16"/>
+        <TabItem Header="MEMORY" FontSize="16"/>
+        <TabItem Header="STATS" FontSize="16"/>
+        <TabItem Header="MODULES" FontSize="16"/>
+        <TabItem Header="LATENCY" FontSize="16"/>
+        <TabItem Header="KEYSPACE" FontSize="16"/>
+        <TabItem Header="REPLICATION" FontSize="16"/>
+        <TabItem Header="SENTINEL" FontSize="16"/>
+        <TabItem Header="CLUSTER" FontSize="16"/>
+      </TabStrip>
+    </DockPanel>
+    <DockPanel Margin="5" Background="#ffffff">
+      <ScrollViewer>
+        <ListBox ItemsSource="{Binding ServerFields}">
+          <ListBox.ItemTemplate>
+            <DataTemplate x:DataType="vm:ServerField">
+              <DockPanel LastChildFill="True">
+                <Panel DockPanel.Dock="Left">
+                  <SelectableTextBlock Width="500"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Left"
+                                       FontSize="16"
+                                       Text="{Binding Field}"/>
+                </Panel>
+                <Panel>
+                  <SelectableTextBlock Text="{Binding Value}"
+                                       FontSize="16"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Left"/>
+                </Panel>
+              </DockPanel>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </ScrollViewer>
+    </DockPanel>
+  </DockPanel>
 
 </UserControl>
